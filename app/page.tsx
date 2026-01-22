@@ -1,65 +1,156 @@
-import Image from "next/image";
+import WallpaperGenerator from "@/components/WallpaperGenerator";
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+   return (
+      <div className="min-h-screen bg-zinc-950 text-white">
+         <main className="container mx-auto px-4 py-16">
+            {/* Hero Section */}
+            <section className="text-center mb-16">
+               <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                  MyDotCalendar
+               </h1>
+               <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+                  Your year, one dot at a time. Generate dynamic wallpapers that
+                  show every day of your year as a dot, updating daily to track
+                  your progress.
+               </p>
+            </section>
+
+            {/* Generator Section */}
+            <section className="mb-16">
+               <WallpaperGenerator />
+            </section>
+
+            {/* Instructions Section */}
+            <section className="max-w-2xl mx-auto mb-16">
+               <h2 className="text-2xl font-semibold mb-6 text-center">
+                  How to Set Up
+               </h2>
+               <div className="space-y-4 text-zinc-400">
+                  <div className="flex gap-4 items-start">
+                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                        1
+                     </span>
+                     <div>
+                        <h3 className="text-white font-medium">
+                           Choose Your Device
+                        </h3>
+                        <p>
+                           Select your MacBook model or enter custom dimensions.
+                        </p>
+                     </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                        2
+                     </span>
+                     <div>
+                        <h3 className="text-white font-medium">
+                           Customize (Optional)
+                        </h3>
+                        <p>Pick your accent color and theme preference.</p>
+                     </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                        3
+                     </span>
+                     <div>
+                        <h3 className="text-white font-medium">Copy the URL</h3>
+                        <p>
+                           Copy the generated wallpaper URL to your clipboard.
+                        </p>
+                     </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                        4
+                     </span>
+                     <div>
+                        <h3 className="text-white font-medium">
+                           Set as Wallpaper
+                        </h3>
+                        <p>
+                           On Mac: System Settings &gt; Wallpaper &gt; Add
+                           Folder/Photo &gt; paste URL. Or use a dynamic
+                           wallpaper app that supports URLs.
+                        </p>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/* Features Section */}
+            <section className="max-w-4xl mx-auto mb-16">
+               <h2 className="text-2xl font-semibold mb-8 text-center">
+                  What Each Dot Means
+               </h2>
+               <div className="grid md:grid-cols-3 gap-6">
+                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+                     <div className="w-8 h-8 rounded-full bg-white mb-4"></div>
+                     <h3 className="text-lg font-medium mb-2">White Dots</h3>
+                     <p className="text-zinc-400">
+                        Days that have passed - days you&apos;ve already lived
+                        this year.
+                     </p>
+                  </div>
+                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+                     <div className="w-8 h-8 rounded-full bg-orange-500 mb-4"></div>
+                     <h3 className="text-lg font-medium mb-2">Orange Dot</h3>
+                     <p className="text-zinc-400">
+                        Today - your current position in the year.
+                     </p>
+                  </div>
+                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+                     <div className="w-8 h-8 rounded-full bg-zinc-700 mb-4"></div>
+                     <h3 className="text-lg font-medium mb-2">Gray Dots</h3>
+                     <p className="text-zinc-400">
+                        Future days - the time you still have ahead.
+                     </p>
+                  </div>
+               </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="max-w-2xl mx-auto mb-16">
+               <h2 className="text-2xl font-semibold mb-8 text-center">FAQ</h2>
+               <div className="space-y-6">
+                  <div>
+                     <h3 className="text-lg font-medium mb-2">
+                        How does it update daily?
+                     </h3>
+                     <p className="text-zinc-400">
+                        The URL generates a fresh image each time it&apos;s
+                        loaded. If your wallpaper app refreshes periodically or
+                        on wake, you&apos;ll see the updated calendar.
+                     </p>
+                  </div>
+                  <div>
+                     <h3 className="text-lg font-medium mb-2">
+                        What are the 365 dots?
+                     </h3>
+                     <p className="text-zinc-400">
+                        Each dot represents one day of the year. On leap years,
+                        you&apos;ll see 366 dots.
+                     </p>
+                  </div>
+                  <div>
+                     <h3 className="text-lg font-medium mb-2">
+                        Can I use custom colors?
+                     </h3>
+                     <p className="text-zinc-400">
+                        Yes! Use the color picker to choose any accent color for
+                        today&apos;s dot and the status text.
+                     </p>
+                  </div>
+               </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="text-center text-zinc-500 text-sm">
+               <p>MyDotCalendar - 365 dots. One year. Make it count.</p>
+            </footer>
+         </main>
+      </div>
+   );
 }
