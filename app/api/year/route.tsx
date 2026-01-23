@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import sharp from "sharp";
 import {
    getDayOfYear,
    getDaysInYear,
@@ -24,6 +25,8 @@ export async function GET(request: NextRequest) {
       const startDateParam = searchParams.get("start_date");
       const accentParam = searchParams.get("accent");
       const themeParam = searchParams.get("theme");
+      const shapeParam = searchParams.get("shape");
+      const formatParam = searchParams.get("format");
 
       // 2. Validate required parameters
       if (!widthParam || !heightParam) {
@@ -89,6 +92,16 @@ export async function GET(request: NextRequest) {
             ? themeParam
             : (DEFAULT_THEME as Theme);
 
+      // Shape: circle (default), square, or rounded
+      type Shape = "circle" | "square" | "rounded";
+      const shape: Shape =
+         shapeParam === "square" || shapeParam === "rounded"
+            ? shapeParam
+            : "circle";
+
+      // Format: png (default) or svg
+      const format = formatParam === "svg" ? "svg" : "png";
+
       // 4. Calculate calendar data
       const today = new Date();
       const dayOfYear = getDayOfYear(today);
@@ -106,9 +119,9 @@ export async function GET(request: NextRequest) {
       const rows = Math.ceil(daysInYear / cols);
 
       // 7. Calculate sizing - compact layout matching reference
-      const marginX = width * 0.05; // 5% margin on each side (reduced)
-      const marginTop = height * 0.08; // 8% top margin (moved up)
-      const marginBottom = height * 0.25; // 25% bottom margin (space for Mac dock)
+      const marginX = width * 0.05;
+      const marginTop = height * 0.08;
+      const marginBottom = height * 0.25;
 
       const availableWidth = width - marginX * 2;
       const availableHeight = height - marginTop - marginBottom;
@@ -119,7 +132,7 @@ export async function GET(request: NextRequest) {
       const cellSize = Math.min(cellWidth, cellHeight);
 
       // Dot takes 60% of cell, gap is 30%
-      const dotDiameter = cellSize * 0.6;
+      const dotDiameter = cellSize * 0.45;
       const dotRadius = dotDiameter / 2;
       const gap = cellSize * 0.3;
 
@@ -131,15 +144,19 @@ export async function GET(request: NextRequest) {
       const offsetX = (width - gridWidth) / 2;
       const offsetY = marginTop + (availableHeight - gridHeight) / 2;
 
-      // 8. Generate SVG circles
-      let circles = "";
+      // 8. Generate SVG shapes based on shape parameter
+      let shapes = "";
+      const cornerRadius = dotDiameter * 0.2;
+
       for (let i = 0; i < daysInYear; i++) {
          const dayNum = i + 1;
          const row = Math.floor(i / cols);
          const col = i % cols;
 
-         const cx = offsetX + col * (dotDiameter + gap) + dotRadius;
-         const cy = offsetY + row * (dotDiameter + gap) + dotRadius;
+         const x = offsetX + col * (dotDiameter + gap);
+         const y = offsetY + row * (dotDiameter + gap);
+         const cx = x + dotRadius;
+         const cy = y + dotRadius;
 
          let color: string;
          if (dayNum < dayOfYear) {
@@ -150,24 +167,23 @@ export async function GET(request: NextRequest) {
             color = colors.futureDot;
          }
 
-         circles += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+         if (shape === "circle") {
+            shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+         } else if (shape === "square") {
+            shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
+         } else if (shape === "rounded") {
+            shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+         }
       }
 
       // 9. Calculate text size relative to image
       const fontSize = Math.max(16, Math.min(32, height * 0.025));
-      // Position text just below the grid (with small gap)
       const textY = offsetY + gridHeight + fontSize * 5.5;
 
-      // 10. Generate SVG with viewBox for responsive scaling in browser
-      const svg = `<svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 ${width} ${height}"
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid meet"
-        style="max-width: 100vw; max-height: 100vh;">
+      // 10. Generate SVG
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
         <rect width="100%" height="100%" fill="${colors.background}"/>
-        ${circles}
+        ${shapes}
         <text
           x="${width / 2}"
           y="${textY}"
@@ -179,11 +195,39 @@ export async function GET(request: NextRequest) {
         >${daysLeft}d left · ${percentComplete}%</text>
       </svg>`;
 
-      // Return SVG
-      return new Response(svg, {
+      // 11. Return based on format
+      if (format === "svg") {
+         return new Response(svg, {
+            headers: {
+               "Content-Type": "image/svg+xml",
+               "Cache-Control": "public, max-age=3600, s-maxage=3600",
+            },
+         });
+      }
+
+      // Convert SVG to high-quality PNG using sharp
+      // Use 150 DPI for crisp Retina rendering with sharpening for defined edges
+      const pngBuffer = await sharp(Buffer.from(svg), { density: 150 })
+         .resize(width, height, {
+            fit: "fill",
+            kernel: "lanczos3",
+         })
+         .sharpen({
+            sigma: 1,
+            m1: 2.5,
+            m2: 1.5,
+         })
+         .png({
+            compressionLevel: 6,
+            palette: false,
+         })
+         .toBuffer();
+
+      return new Response(new Uint8Array(pngBuffer), {
          headers: {
-            "Content-Type": "image/svg+xml",
+            "Content-Type": "image/png",
             "Cache-Control": "public, max-age=3600, s-maxage=3600",
+            "Content-Disposition": `inline; filename="mydotcalendar-${width}x${height}.png"`,
          },
       });
    } catch (error) {

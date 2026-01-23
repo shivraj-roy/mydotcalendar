@@ -13,6 +13,7 @@ export default function WallpaperGenerator() {
    const [customHeight, setCustomHeight] = useState(1964);
    const [accentColor, setAccentColor] = useState("ff6347");
    const [theme, setTheme] = useState<"dark" | "light">("dark");
+   const [shape, setShape] = useState<"circle" | "square" | "rounded">("circle");
    const [generatedUrl, setGeneratedUrl] = useState("");
    const [copied, setCopied] = useState(false);
    const [isCustom, setIsCustom] = useState(false);
@@ -32,7 +33,7 @@ export default function WallpaperGenerator() {
    // Generate URL whenever parameters change
    useEffect(() => {
       generateUrl();
-   }, [customWidth, customHeight, accentColor, theme]);
+   }, [customWidth, customHeight, accentColor, theme, shape]);
 
    function generateUrl() {
       const baseUrl =
@@ -46,6 +47,9 @@ export default function WallpaperGenerator() {
       }
       if (theme !== "dark") {
          params.append("theme", theme);
+      }
+      if (shape !== "circle") {
+         params.append("shape", shape);
       }
 
       const url = `${baseUrl}/api/year?${params.toString()}`;
@@ -199,6 +203,48 @@ export default function WallpaperGenerator() {
                   }`}
                >
                   Light
+               </button>
+            </div>
+         </div>
+
+         {/* Shape Selection */}
+         <div className="space-y-2">
+            <label className="block text-sm font-medium text-zinc-300">
+               Shape
+            </label>
+            <div className="flex gap-4">
+               <button
+                  onClick={() => setShape("circle")}
+                  className={`flex-1 px-4 py-3 rounded-lg border transition-all flex items-center justify-center gap-2 ${
+                     shape === "circle"
+                        ? "bg-zinc-700 border-orange-500 text-white"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                  }`}
+               >
+                  <span className="w-4 h-4 rounded-full bg-current" />
+                  Circle
+               </button>
+               <button
+                  onClick={() => setShape("square")}
+                  className={`flex-1 px-4 py-3 rounded-lg border transition-all flex items-center justify-center gap-2 ${
+                     shape === "square"
+                        ? "bg-zinc-700 border-orange-500 text-white"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                  }`}
+               >
+                  <span className="w-4 h-4 bg-current" />
+                  Square
+               </button>
+               <button
+                  onClick={() => setShape("rounded")}
+                  className={`flex-1 px-4 py-3 rounded-lg border transition-all flex items-center justify-center gap-2 ${
+                     shape === "rounded"
+                        ? "bg-zinc-700 border-orange-500 text-white"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                  }`}
+               >
+                  <span className="w-4 h-4 rounded-sm bg-current" />
+                  Rounded
                </button>
             </div>
          </div>
