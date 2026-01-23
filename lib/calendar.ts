@@ -150,3 +150,53 @@ export function isValidHexColor(color: string): boolean {
    const regex = /^[0-9A-Fa-f]{6}$/;
    return regex.test(color);
 }
+
+/**
+ * Get days in a specific month (1-indexed: 1 = January)
+ */
+export function getDaysInMonth(year: number, month: number): number {
+   return new Date(year, month, 0).getDate();
+}
+
+/**
+ * Get the day of week the month starts on (0 = Sunday, 6 = Saturday)
+ */
+export function getFirstDayOfMonth(year: number, month: number): number {
+   return new Date(year, month - 1, 1).getDay();
+}
+
+/**
+ * Get month name abbreviation
+ */
+export function getMonthName(month: number): string {
+   const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+   ];
+   return months[month - 1];
+}
+
+/**
+ * Get day of year for a specific date in a year
+ */
+export function getDayOfYearForDate(
+   year: number,
+   month: number,
+   day: number,
+): number {
+   const date = new Date(year, month - 1, day);
+   const start = new Date(year, 0, 0);
+   const diff = date.getTime() - start.getTime();
+   const oneDay = 1000 * 60 * 60 * 24;
+   return Math.floor(diff / oneDay);
+}

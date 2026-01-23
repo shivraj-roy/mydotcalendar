@@ -14,6 +14,7 @@ export default function WallpaperGenerator() {
    const [accentColor, setAccentColor] = useState("ff6347");
    const [theme, setTheme] = useState<"dark" | "light">("dark");
    const [shape, setShape] = useState<"circle" | "square" | "rounded">("circle");
+   const [layout, setLayout] = useState<"year" | "month">("year");
    const [generatedUrl, setGeneratedUrl] = useState("");
    const [copied, setCopied] = useState(false);
    const [isCustom, setIsCustom] = useState(false);
@@ -33,7 +34,7 @@ export default function WallpaperGenerator() {
    // Generate URL whenever parameters change
    useEffect(() => {
       generateUrl();
-   }, [customWidth, customHeight, accentColor, theme, shape]);
+   }, [customWidth, customHeight, accentColor, theme, shape, layout]);
 
    function generateUrl() {
       const baseUrl =
@@ -50,6 +51,9 @@ export default function WallpaperGenerator() {
       }
       if (shape !== "circle") {
          params.append("shape", shape);
+      }
+      if (layout !== "year") {
+         params.append("layout", layout);
       }
 
       const url = `${baseUrl}/api/year?${params.toString()}`;
@@ -203,6 +207,35 @@ export default function WallpaperGenerator() {
                   }`}
                >
                   Light
+               </button>
+            </div>
+         </div>
+
+         {/* Layout Selection */}
+         <div className="space-y-2">
+            <label className="block text-sm font-medium text-zinc-300">
+               Layout
+            </label>
+            <div className="flex gap-4">
+               <button
+                  onClick={() => setLayout("year")}
+                  className={`flex-1 px-4 py-3 rounded-lg border transition-all ${
+                     layout === "year"
+                        ? "bg-zinc-700 border-orange-500 text-white"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                  }`}
+               >
+                  Year (Continuous)
+               </button>
+               <button
+                  onClick={() => setLayout("month")}
+                  className={`flex-1 px-4 py-3 rounded-lg border transition-all ${
+                     layout === "month"
+                        ? "bg-zinc-700 border-orange-500 text-white"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                  }`}
+               >
+                  Month (Calendar)
                </button>
             </div>
          </div>

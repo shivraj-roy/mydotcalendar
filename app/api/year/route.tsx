@@ -3,6 +3,10 @@ import sharp from "sharp";
 import {
    getDayOfYear,
    getDaysInYear,
+   getDaysInMonth,
+   getFirstDayOfMonth,
+   getMonthName,
+   getDayOfYearForDate,
    isValidDateFormat,
    isValidHexColor,
    getCurrentYearStart,
@@ -27,6 +31,7 @@ export async function GET(request: NextRequest) {
       const themeParam = searchParams.get("theme");
       const shapeParam = searchParams.get("shape");
       const formatParam = searchParams.get("format");
+      const layoutParam = searchParams.get("layout");
 
       // 2. Validate required parameters
       if (!widthParam || !heightParam) {
@@ -102,6 +107,10 @@ export async function GET(request: NextRequest) {
       // Format: png (default) or svg
       const format = formatParam === "svg" ? "svg" : "png";
 
+      // Layout: year (default continuous) or month (grouped by month)
+      type Layout = "year" | "month";
+      const layout: Layout = layoutParam === "month" ? "month" : "year";
+
       // 4. Calculate calendar data
       const today = new Date();
       const dayOfYear = getDayOfYear(today);
@@ -114,86 +123,212 @@ export async function GET(request: NextRequest) {
       const colors = DEFAULT_COLORS[theme];
       const accentColor = `#${accent}`;
 
-      // 6. Calculate grid layout - 30 columns to fill width better
-      const cols = 30;
-      const rows = Math.ceil(daysInYear / cols);
+      let svg: string;
 
-      // 7. Calculate sizing - compact layout matching reference
-      const marginX = width * 0.05;
-      const marginTop = height * 0.08;
-      const marginBottom = height * 0.25;
+      if (layout === "month") {
+         // ============ MONTH LAYOUT ============
+         // 4 columns x 3 rows of months
+         const monthCols = 4;
+         const monthRows = 3;
 
-      const availableWidth = width - marginX * 2;
-      const availableHeight = height - marginTop - marginBottom;
+         // Calculate sizing
+         const marginX = width * 0.12; // Increased side margin
+         const marginTop = height * 0.08;
+         const marginBottom = height * 0.15;
 
-      // Calculate dot size based on available space
-      const cellWidth = availableWidth / cols;
-      const cellHeight = availableHeight / rows;
-      const cellSize = Math.min(cellWidth, cellHeight);
+         const availableWidth = width - marginX * 2;
+         const availableHeight = height - marginTop - marginBottom;
 
-      // Dot takes 60% of cell, gap is 30%
-      const dotDiameter = cellSize * 0.45;
-      const dotRadius = dotDiameter / 2;
-      const gap = cellSize * 0.3;
+         // Each month block size - gaps between months
+         const monthGapX = width * 0.02; // Horizontal gap between months
+         const monthGapY = height * -0.2; // Minimal vertical gap between rows
+         const monthBlockWidth =
+            (availableWidth - monthGapX * (monthCols - 1)) / monthCols;
+         const monthBlockHeight =
+            (availableHeight - monthGapY * (monthRows - 1)) / monthRows;
 
-      // Calculate actual grid dimensions
-      const gridWidth = cols * dotDiameter + (cols - 1) * gap;
-      const gridHeight = rows * dotDiameter + (rows - 1) * gap;
+         // Days grid within each month: 7 columns (days of week), up to 6 rows
+         const dayCols = 7;
+         const dayRows = 6;
 
-      // Center the grid
-      const offsetX = (width - gridWidth) / 2;
-      const offsetY = marginTop + (availableHeight - gridHeight) / 2;
+         // Calculate dot size for month layout
+         const monthPaddingX = monthBlockWidth * 0.1;
+         const monthPaddingTop = monthBlockHeight * 0.08; // Reduced space for label
+         const monthPaddingBottom = monthBlockHeight * 0.05;
 
-      // 8. Generate SVG shapes based on shape parameter
-      let shapes = "";
-      const cornerRadius = dotDiameter * 0.2;
+         const dayAreaWidth = monthBlockWidth - monthPaddingX * 2;
+         const dayAreaHeight =
+            monthBlockHeight - monthPaddingTop - monthPaddingBottom;
 
-      for (let i = 0; i < daysInYear; i++) {
-         const dayNum = i + 1;
-         const row = Math.floor(i / cols);
-         const col = i % cols;
+         const dayCellWidth = dayAreaWidth / dayCols;
+         const dayCellHeight = dayAreaHeight / dayRows;
+         const dayCellSize = Math.min(dayCellWidth, dayCellHeight);
 
-         const x = offsetX + col * (dotDiameter + gap);
-         const y = offsetY + row * (dotDiameter + gap);
-         const cx = x + dotRadius;
-         const cy = y + dotRadius;
+         const dotDiameter = dayCellSize * 0.5; // Smaller dots
+         const dotRadius = dotDiameter / 2;
+         const dayGap = dayCellSize * 0.3;
+         const cornerRadius = dotDiameter * 0.2;
 
-         let color: string;
-         if (dayNum < dayOfYear) {
-            color = colors.passedDot;
-         } else if (dayNum === dayOfYear) {
-            color = accentColor;
-         } else {
-            color = colors.futureDot;
+         // Font sizes
+         const labelFontSize = Math.max(
+            12,
+            Math.min(24, monthBlockHeight * 0.1),
+         );
+         const statusFontSize = Math.max(16, Math.min(32, height * 0.025));
+
+         let shapes = "";
+
+         // Generate each month
+         for (let m = 1; m <= 12; m++) {
+            const monthCol = (m - 1) % monthCols;
+            const monthRow = Math.floor((m - 1) / monthCols);
+
+            const monthX = marginX + monthCol * (monthBlockWidth + monthGapX);
+            const monthY =
+               marginTop + monthRow * (monthBlockHeight + monthGapY);
+
+            // Month label - gray color, closer to dots
+            const labelX = monthX + monthPaddingX;
+            const labelY = monthY + labelFontSize * 1.1;
+            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="${labelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
+
+            // Days grid
+            const daysInThisMonth = getDaysInMonth(startYear, m);
+            const firstDayOfWeek = getFirstDayOfMonth(startYear, m);
+
+            const dayGridX = monthX + monthPaddingX;
+            const dayGridY = monthY + monthPaddingTop;
+
+            for (let d = 1; d <= daysInThisMonth; d++) {
+               const dayIndex = firstDayOfWeek + d - 1;
+               const row = Math.floor(dayIndex / 7);
+               const col = dayIndex % 7;
+
+               const x = dayGridX + col * (dotDiameter + dayGap);
+               const y = dayGridY + row * (dotDiameter + dayGap);
+               const cx = x + dotRadius;
+               const cy = y + dotRadius;
+
+               // Determine color based on day of year
+               const thisDayOfYear = getDayOfYearForDate(startYear, m, d);
+               let color: string;
+               if (thisDayOfYear < dayOfYear) {
+                  color = colors.passedDot;
+               } else if (thisDayOfYear === dayOfYear) {
+                  color = accentColor;
+               } else {
+                  color = colors.futureDot;
+               }
+
+               if (shape === "circle") {
+                  shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+               } else if (shape === "square") {
+                  shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
+               } else if (shape === "rounded") {
+                  shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+               }
+            }
          }
 
-         if (shape === "circle") {
-            shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
-         } else if (shape === "square") {
-            shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
-         } else if (shape === "rounded") {
-            shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+         // Status text at bottom - lifted up
+         const textY = height - marginBottom * 1;
+
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+           <rect width="100%" height="100%" fill="${colors.background}"/>
+           ${shapes}
+           <text
+             x="${width / 2}"
+             y="${textY}"
+             text-anchor="middle"
+             fill="${accentColor}"
+             font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+             font-size="${statusFontSize}"
+             font-weight="400"
+           >${daysLeft}d left · ${percentComplete}%</text>
+         </svg>`;
+      } else {
+         // ============ YEAR LAYOUT (continuous dots) ============
+         // 6. Calculate grid layout - 30 columns to fill width better
+         const cols = 30;
+         const rows = Math.ceil(daysInYear / cols);
+
+         // 7. Calculate sizing - compact layout matching reference
+         const marginX = width * 0.05;
+         const marginTop = height * 0.08;
+         const marginBottom = height * 0.25;
+
+         const availableWidth = width - marginX * 2;
+         const availableHeight = height - marginTop - marginBottom;
+
+         // Calculate dot size based on available space
+         const cellWidth = availableWidth / cols;
+         const cellHeight = availableHeight / rows;
+         const cellSize = Math.min(cellWidth, cellHeight);
+
+         // Dot takes 60% of cell, gap is 30%
+         const dotDiameter = cellSize * 0.45;
+         const dotRadius = dotDiameter / 2;
+         const gap = cellSize * 0.3;
+
+         // Calculate actual grid dimensions
+         const gridWidth = cols * dotDiameter + (cols - 1) * gap;
+         const gridHeight = rows * dotDiameter + (rows - 1) * gap;
+
+         // Center the grid
+         const offsetX = (width - gridWidth) / 2;
+         const offsetY = marginTop + (availableHeight - gridHeight) / 2;
+
+         // 8. Generate SVG shapes based on shape parameter
+         let shapes = "";
+         const cornerRadius = dotDiameter * 0.2;
+
+         for (let i = 0; i < daysInYear; i++) {
+            const dayNum = i + 1;
+            const row = Math.floor(i / cols);
+            const col = i % cols;
+
+            const x = offsetX + col * (dotDiameter + gap);
+            const y = offsetY + row * (dotDiameter + gap);
+            const cx = x + dotRadius;
+            const cy = y + dotRadius;
+
+            let color: string;
+            if (dayNum < dayOfYear) {
+               color = colors.passedDot;
+            } else if (dayNum === dayOfYear) {
+               color = accentColor;
+            } else {
+               color = colors.futureDot;
+            }
+
+            if (shape === "circle") {
+               shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+            } else if (shape === "square") {
+               shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
+            } else if (shape === "rounded") {
+               shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+            }
          }
+
+         // 9. Calculate text size relative to image
+         const fontSize = Math.max(16, Math.min(32, height * 0.025));
+         const textY = offsetY + gridHeight + fontSize * 5.5;
+
+         // 10. Generate SVG
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+           <rect width="100%" height="100%" fill="${colors.background}"/>
+           ${shapes}
+           <text
+             x="${width / 2}"
+             y="${textY}"
+             text-anchor="middle"
+             fill="${accentColor}"
+             font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+             font-size="${fontSize}"
+             font-weight="400"
+           >${daysLeft}d left · ${percentComplete}%</text>
+         </svg>`;
       }
-
-      // 9. Calculate text size relative to image
-      const fontSize = Math.max(16, Math.min(32, height * 0.025));
-      const textY = offsetY + gridHeight + fontSize * 5.5;
-
-      // 10. Generate SVG
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-        <rect width="100%" height="100%" fill="${colors.background}"/>
-        ${shapes}
-        <text
-          x="${width / 2}"
-          y="${textY}"
-          text-anchor="middle"
-          fill="${accentColor}"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          font-size="${fontSize}"
-          font-weight="400"
-        >${daysLeft}d left · ${percentComplete}%</text>
-      </svg>`;
 
       // 11. Return based on format
       if (format === "svg") {
