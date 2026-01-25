@@ -28,7 +28,7 @@ export const DEFAULT_COLORS: Record<"dark" | "light", ThemeColors> = {
       text: "#ff6347",
    },
    light: {
-      background: "#ffffff",
+      background: "#fafaff",
       passedDot: "#1a1a1a",
       currentDot: "#ff6347",
       futureDot: "#e5e5e5",

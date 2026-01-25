@@ -24,7 +24,7 @@ interface InstallationDialogProps {
 }
 
 const deviceNames = Object.keys(DEVICE_RESOLUTIONS).filter(
-   (name) => name !== "Custom"
+   (name) => name !== "Custom",
 );
 
 const accentColors = [
@@ -41,7 +41,9 @@ export default function InstallationDialog({
    const [layout, setLayout] = useState<"year" | "month">("year");
    const [accentColor, setAccentColor] = useState("ff6347");
    const [theme, setTheme] = useState<"dark" | "light">("dark");
-   const [shape, setShape] = useState<"circle" | "square" | "rounded">("circle");
+   const [shape, setShape] = useState<"circle" | "square" | "rounded">(
+      "circle",
+   );
    const [generatedUrl, setGeneratedUrl] = useState("");
    const [copied, setCopied] = useState(false);
 
@@ -87,19 +89,22 @@ export default function InstallationDialog({
 
    return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-         <DrawerContent className="bg-zinc-900 border-zinc-800 text-white max-h-[85vh] flex flex-col">
+         <DrawerContent className="bg-zinc-900 border-zinc-800 text-white max-h-[90vh] md:max-h-[85vh] flex flex-col">
             <DrawerHeader className="border-b border-zinc-800 pb-4 shrink-0">
                <DrawerTitle className="text-xl font-semibold">
                   Installation Steps
                </DrawerTitle>
                <p className="text-sm text-zinc-400 mt-2">
-                  First, define your wallpaper settings. Then create an
-                  automation to run daily. Finally, add the shortcut actions to
-                  update your lock screen.
+                  Start by configuring your wallpaper settings. Next, set up a
+                  daily automation. Finally, add the shortcut actions so your
+                  wallpaper updates automatically.
                </p>
             </DrawerHeader>
 
-            <ScrollArea className="flex-1 overflow-y-auto px-4" style={{ maxHeight: "calc(85vh - 180px)" }}>
+            <ScrollArea
+               className="flex-1 overflow-y-auto px-3 md:px-4"
+               style={{ maxHeight: "calc(90vh - 160px)" }}
+            >
                <div className="space-y-6 py-4">
                   {/* Step 1: Define Wallpaper */}
                   <div className="space-y-4">
@@ -110,7 +115,7 @@ export default function InstallationDialog({
                         <h3 className="font-medium">Define your Wallpaper</h3>
                      </div>
 
-                     <div className="ml-9 space-y-4">
+                     <div className="ml-0 md:ml-9 space-y-4">
                         {/* Layout Style */}
                         <div className="space-y-2">
                            <label className="text-sm text-zinc-400">
@@ -122,7 +127,7 @@ export default function InstallationDialog({
                                  setLayout(value)
                               }
                            >
-                              <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none">
+                              <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
                                  <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
@@ -142,7 +147,7 @@ export default function InstallationDialog({
                               MacBook Model
                            </label>
                            <Select value={device} onValueChange={setDevice}>
-                              <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none">
+                              <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
                                  <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
@@ -157,11 +162,13 @@ export default function InstallationDialog({
 
                         {/* Theme Toggle */}
                         <div className="space-y-2">
-                           <label className="text-sm text-zinc-400">Theme</label>
+                           <label className="text-sm text-zinc-400">
+                              Theme
+                           </label>
                            <div className="flex gap-2">
                               <button
                                  onClick={() => setTheme("dark")}
-                                 className={`flex-1 px-4 py-2 border transition-all ${
+                                 className={`flex-1 px-4 py-2 border transition-all cursor-pointer ${
                                     theme === "dark"
                                        ? "bg-zinc-700 border-orange-500 text-white"
                                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
@@ -171,7 +178,7 @@ export default function InstallationDialog({
                               </button>
                               <button
                                  onClick={() => setTheme("light")}
-                                 className={`flex-1 px-4 py-2 border transition-all ${
+                                 className={`flex-1 px-4 py-2 border transition-all cursor-pointer ${
                                     theme === "light"
                                        ? "bg-zinc-700 border-orange-500 text-white"
                                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
@@ -184,11 +191,13 @@ export default function InstallationDialog({
 
                         {/* Shape Selection */}
                         <div className="space-y-2">
-                           <label className="text-sm text-zinc-400">Shape</label>
+                           <label className="text-sm text-zinc-400">
+                              Shape
+                           </label>
                            <div className="flex gap-2">
                               <button
                                  onClick={() => setShape("circle")}
-                                 className={`flex-1 px-4 py-2 border transition-all flex items-center justify-center gap-2 ${
+                                 className={`flex-1 px-2 md:px-4 py-2 border transition-all flex items-center justify-center gap-1.5 md:gap-2 text-sm md:text-base cursor-pointer ${
                                     shape === "circle"
                                        ? "bg-zinc-700 border-orange-500 text-white"
                                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
@@ -199,7 +208,7 @@ export default function InstallationDialog({
                               </button>
                               <button
                                  onClick={() => setShape("square")}
-                                 className={`flex-1 px-4 py-2 border transition-all flex items-center justify-center gap-2 ${
+                                 className={`flex-1 px-2 md:px-4 py-2 border transition-all flex items-center justify-center gap-1.5 md:gap-2 text-sm md:text-base cursor-pointer ${
                                     shape === "square"
                                        ? "bg-zinc-700 border-orange-500 text-white"
                                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
@@ -210,13 +219,13 @@ export default function InstallationDialog({
                               </button>
                               <button
                                  onClick={() => setShape("rounded")}
-                                 className={`flex-1 px-4 py-2 border transition-all flex items-center justify-center gap-2 ${
+                                 className={`flex-1 px-2 md:px-4 py-2 border transition-all flex items-center justify-center gap-1.5 md:gap-2 text-sm md:text-base cursor-pointer ${
                                     shape === "rounded"
                                        ? "bg-zinc-700 border-orange-500 text-white"
                                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
                                  }`}
                               >
-                                 <span className="w-3 h-3 rounded-sm bg-current" />
+                                 <span className="w-3 h-3 rounded-[4px] bg-current" />
                                  Rounded
                               </button>
                            </div>
@@ -232,7 +241,7 @@ export default function InstallationDialog({
                                  <button
                                     key={color.value}
                                     onClick={() => setAccentColor(color.value)}
-                                    className={`flex-1 px-4 py-2 border transition-all flex items-center justify-center gap-2 ${
+                                    className={`flex-1 px-2 md:px-4 py-2 border transition-all flex items-center justify-center gap-1.5 md:gap-2 text-sm md:text-base cursor-pointer ${
                                        accentColor === color.value
                                           ? "bg-zinc-700 border-orange-500 text-white"
                                           : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600"
@@ -240,7 +249,9 @@ export default function InstallationDialog({
                                  >
                                     <span
                                        className="w-3 h-3 rounded-full"
-                                       style={{ backgroundColor: `#${color.value}` }}
+                                       style={{
+                                          backgroundColor: `#${color.value}`,
+                                       }}
                                     />
                                     {color.name}
                                  </button>
@@ -276,29 +287,32 @@ export default function InstallationDialog({
                         <h3 className="font-medium">Create Automation</h3>
                      </div>
 
-                     <div className="ml-9 space-y-2 text-sm text-zinc-400">
+                     <div className="ml-0 md:ml-9 space-y-2 text-sm text-zinc-400">
                         <p>
                            Open{" "}
-                           <span className="text-blue-400 underline">
+                           <a
+                              href="shortcuts://"
+                              className="text-blue-400 underline hover:text-blue-300"
+                           >
                               Shortcuts
-                           </span>{" "}
-                           app → Go to{" "}
+                           </a>{" "}
+                           app ➡︎ Go to{" "}
                            <span className="text-white font-medium">
                               Automation
                            </span>{" "}
-                           tab → New Automation →{" "}
+                           tab ➡︎ New Automation ➡︎{" "}
                            <span className="text-white font-medium">
                               Time of Day
                            </span>{" "}
-                           → 6:00 AM → Repeat{" "}
+                           ➡︎ 6:00 AM ➡︎ Repeat{" "}
                            <span className="text-white font-medium">
                               &quot;Daily&quot;
                            </span>{" "}
-                           → Select{" "}
+                           ➡︎ Select{" "}
                            <span className="text-white font-medium">
                               &quot;Run Immediately&quot;
                            </span>{" "}
-                           →{" "}
+                           ➡︎{" "}
                            <span className="text-orange-400 font-medium">
                               &quot;Create New Shortcut&quot;
                            </span>
@@ -315,7 +329,7 @@ export default function InstallationDialog({
                         <h3 className="font-medium">Create Shortcut</h3>
                      </div>
 
-                     <div className="ml-9 space-y-4">
+                     <div className="ml-0 md:ml-9 space-y-4">
                         <p className="text-xs text-zinc-500 uppercase tracking-wide">
                            Add these actions:
                         </p>
@@ -323,12 +337,12 @@ export default function InstallationDialog({
                         <div className="space-y-3">
                            <div className="space-y-2">
                               <p className="text-sm">
-                                 <span className="text-zinc-500">3.1</span>{" "}
+                                 <span className="text-zinc-500">Step 1: </span>{" "}
                                  <span className="text-white font-medium">
                                     &quot;Get Contents of URL&quot;
                                  </span>{" "}
                                  <span className="text-zinc-400">
-                                    → paste the following URL below:
+                                    ➡︎ paste the following URL below:
                                  </span>
                               </p>
                               <div className="flex gap-2">
@@ -342,7 +356,7 @@ export default function InstallationDialog({
                                     onClick={copyUrl}
                                     variant="outline"
                                     size="sm"
-                                    className="border-zinc-700 hover:bg-zinc-800 rounded-none"
+                                    className="border-zinc-700 hover:bg-zinc-800 rounded-none cursor-pointer"
                                  >
                                     {copied ? "Copied!" : "Copy"}
                                  </Button>
@@ -351,40 +365,31 @@ export default function InstallationDialog({
 
                            <div className="space-y-2">
                               <p className="text-sm">
-                                 <span className="text-zinc-500">3.2</span>{" "}
+                                 <span className="text-zinc-500">Step 2: </span>{" "}
                                  <span className="text-white font-medium">
                                     &quot;Set Wallpaper Photo&quot;
                                  </span>{" "}
-                                 <span className="text-zinc-400">
-                                    → choose{" "}
-                                    <span className="text-white">
-                                       &quot;Lock Screen&quot;
-                                    </span>
-                                 </span>
                               </p>
                            </div>
                         </div>
 
                         <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
-                           <p className="text-blue-400 font-medium">Important:</p>
+                           <p className="text-blue-400 font-medium">
+                              Important:
+                           </p>
                            <p className="text-zinc-400 mt-1">
-                              In{" "}
+                              In System Setting&#39;s{" "}
                               <span className="text-white">
-                                 &quot;Set Wallpaper Photo&quot;
+                                 &quot;Wallpaper &quot;
                               </span>
-                              , tap the arrow (›) to show options → disable both{" "}
+                              , set to{" "}
                               <span className="text-white">
-                                 &quot;Crop to Subject&quot;
-                              </span>{" "}
-                              and{" "}
-                              <span className="text-white">
-                                 &quot;Show Preview&quot;
+                                 &quot;Fill Screen&quot;
                               </span>
                               .
                            </p>
                            <p className="text-zinc-500 mt-2 text-xs">
-                              This prevents iOS from cropping and asking for
-                              confirmation each time.
+                              This helps the wallpaper not get cut off.
                            </p>
                         </div>
                      </div>
@@ -392,7 +397,7 @@ export default function InstallationDialog({
                </div>
             </ScrollArea>
 
-            <div className="flex gap-3 p-4 border-t border-zinc-800 shrink-0">
+            <div className="flex gap-3 p-3 md:p-4 border-t border-zinc-800 shrink-0">
                <Button
                   variant="outline"
                   className="flex-1 border-zinc-700 hover:bg-zinc-800 rounded-none"

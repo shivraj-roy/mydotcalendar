@@ -20,20 +20,20 @@ export default function Home() {
 
          <main className="container mx-auto px-4 pt-20 pb-8 flex-1">
             {/* Hero Section */}
-            <section className="text-center mt-8 mb-16 max-w-4xl mx-auto">
-               <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                  <span className="">Minimalist wallpapers</span>
+            <section className="text-center mt-4 md:mt-8 mb-10 md:mb-16 max-w-4xl mx-auto">
+               <h1 className="text-4xl md:text-7xl font-bold leading-[1.1]">
+                  <span className="">Minimal by design.</span>
                   <br />
-                  <span className="">for mindful living.</span>
+                  <span className="">Productive wallpapers.</span>
                </h1>
                <p className="text-lg md:text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
-                  Visualize your year progress at a glance. Updated
-                  automatically on your lock screen.
+                  Your progress, at a glance. <br />
+                  Auto-updated on your screen.
                </p>
             </section>
 
             {/* Calendar Card */}
-            <section className="max-w-md mx-auto mb-20">
+            <section className="max-w-md mx-auto mb-12 md:mb-20">
                <div
                   className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
                   onClick={() => setDialogOpen(true)}
