@@ -1,156 +1,107 @@
-import WallpaperGenerator from "@/components/WallpaperGenerator";
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import InstallationDialog from "@/components/InstallationDialog";
 
 export default function Home() {
+   const [dialogOpen, setDialogOpen] = useState(false);
+
    return (
-      <div className="min-h-screen bg-zinc-950 text-white">
-         <main className="container mx-auto px-4 py-16">
-            {/* Hero Section */}
-            <section className="text-center mb-16">
-               <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+      <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+         {/* Fixed Header */}
+         <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-800">
+            <div className="container mx-auto px-4 py-4 text-center">
+               <p className="text-sm text-zinc-400 tracking-wide">
                   MyDotCalendar
+               </p>
+            </div>
+         </header>
+
+         <main className="container mx-auto px-4 pt-20 pb-8 flex-1">
+            {/* Hero Section */}
+            <section className="text-center mt-8 mb-16 max-w-4xl mx-auto">
+               <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                  <span className="">Minimalist wallpapers</span>
+                  <br />
+                  <span className="">for mindful living.</span>
                </h1>
-               <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-                  Your year, one dot at a time. Generate dynamic wallpapers that
-                  show every day of your year as a dot, updating daily to track
-                  your progress.
+               <p className="text-lg md:text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
+                  Visualize your year progress at a glance. Updated
+                  automatically on your lock screen.
                </p>
             </section>
 
-            {/* Generator Section */}
-            <section className="mb-16">
-               <WallpaperGenerator />
-            </section>
+            {/* Calendar Card */}
+            <section className="max-w-md mx-auto mb-20">
+               <div
+                  className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
+                  onClick={() => setDialogOpen(true)}
+               >
+                  <div className="text-center mb-4">
+                     <h2 className="text-xl font-semibold">Year Calendar</h2>
+                     <p className="text-sm text-zinc-400 mt-1">
+                        Track your year&apos;s progress
+                     </p>
+                  </div>
 
-            {/* Instructions Section */}
-            <section className="max-w-2xl mx-auto mb-16">
-               <h2 className="text-2xl font-semibold mb-6 text-center">
-                  How to Set Up
-               </h2>
-               <div className="space-y-4 text-zinc-400">
-                  <div className="flex gap-4 items-start">
-                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                        1
-                     </span>
-                     <div>
-                        <h3 className="text-white font-medium">
-                           Choose Your Device
-                        </h3>
-                        <p>
-                           Select your MacBook model or enter custom dimensions.
-                        </p>
-                     </div>
+                  {/* MacBook Mockup */}
+                  <div className="relative w-full aspect-[4/3] mb-4">
+                     <Image
+                        src="/my-dot-calendar.png"
+                        alt="Year Calendar Wallpaper Preview"
+                        fill
+                        className="object-contain"
+                        priority
+                     />
                   </div>
-                  <div className="flex gap-4 items-start">
-                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                        2
-                     </span>
-                     <div>
-                        <h3 className="text-white font-medium">
-                           Customize (Optional)
-                        </h3>
-                        <p>Pick your accent color and theme preference.</p>
-                     </div>
-                  </div>
-                  <div className="flex gap-4 items-start">
-                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                        3
-                     </span>
-                     <div>
-                        <h3 className="text-white font-medium">Copy the URL</h3>
-                        <p>
-                           Copy the generated wallpaper URL to your clipboard.
-                        </p>
-                     </div>
-                  </div>
-                  <div className="flex gap-4 items-start">
-                     <span className="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                        4
-                     </span>
-                     <div>
-                        <h3 className="text-white font-medium">
-                           Set as Wallpaper
-                        </h3>
-                        <p>
-                           On Mac: System Settings &gt; Wallpaper &gt; Add
-                           Folder/Photo &gt; paste URL. Or use a dynamic
-                           wallpaper app that supports URLs.
-                        </p>
-                     </div>
-                  </div>
+
+                  {/* Install Button */}
+                  <button
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        setDialogOpen(true);
+                     }}
+                     className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+                  >
+                     <span>Install</span>
+                     <svg
+                        className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                     >
+                        <path
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           strokeWidth={2}
+                           d="M9 5l7 7-7 7"
+                        />
+                     </svg>
+                  </button>
                </div>
             </section>
-
-            {/* Features Section */}
-            <section className="max-w-4xl mx-auto mb-16">
-               <h2 className="text-2xl font-semibold mb-8 text-center">
-                  What Each Dot Means
-               </h2>
-               <div className="grid md:grid-cols-3 gap-6">
-                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-                     <div className="w-8 h-8 rounded-full bg-white mb-4"></div>
-                     <h3 className="text-lg font-medium mb-2">White Dots</h3>
-                     <p className="text-zinc-400">
-                        Days that have passed - days you&apos;ve already lived
-                        this year.
-                     </p>
-                  </div>
-                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-                     <div className="w-8 h-8 rounded-full bg-orange-500 mb-4"></div>
-                     <h3 className="text-lg font-medium mb-2">Orange Dot</h3>
-                     <p className="text-zinc-400">
-                        Today - your current position in the year.
-                     </p>
-                  </div>
-                  <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-                     <div className="w-8 h-8 rounded-full bg-zinc-700 mb-4"></div>
-                     <h3 className="text-lg font-medium mb-2">Gray Dots</h3>
-                     <p className="text-zinc-400">
-                        Future days - the time you still have ahead.
-                     </p>
-                  </div>
-               </div>
-            </section>
-
-            {/* FAQ Section */}
-            <section className="max-w-2xl mx-auto mb-16">
-               <h2 className="text-2xl font-semibold mb-8 text-center">FAQ</h2>
-               <div className="space-y-6">
-                  <div>
-                     <h3 className="text-lg font-medium mb-2">
-                        How does it update daily?
-                     </h3>
-                     <p className="text-zinc-400">
-                        The URL generates a fresh image each time it&apos;s
-                        loaded. If your wallpaper app refreshes periodically or
-                        on wake, you&apos;ll see the updated calendar.
-                     </p>
-                  </div>
-                  <div>
-                     <h3 className="text-lg font-medium mb-2">
-                        What are the 365 dots?
-                     </h3>
-                     <p className="text-zinc-400">
-                        Each dot represents one day of the year. On leap years,
-                        you&apos;ll see 366 dots.
-                     </p>
-                  </div>
-                  <div>
-                     <h3 className="text-lg font-medium mb-2">
-                        Can I use custom colors?
-                     </h3>
-                     <p className="text-zinc-400">
-                        Yes! Use the color picker to choose any accent color for
-                        today&apos;s dot and the status text.
-                     </p>
-                  </div>
-               </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="text-center text-zinc-500 text-sm">
-               <p>MyDotCalendar - 365 dots. One year. Make it count.</p>
-            </footer>
          </main>
+
+         {/* Footer */}
+         <footer className="border-t border-zinc-800 py-8">
+            <div className="container mx-auto px-4 text-center text-zinc-500 text-sm">
+               <p>
+                  Made by{" "}
+                  <a
+                     href="https://twitter.com/shivraj_roy10"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-zinc-400 hover:text-white transition-colors underline"
+                  >
+                     @shivraj_roy10
+                  </a>
+               </p>
+            </div>
+         </footer>
+
+         {/* Installation Dialog */}
+         <InstallationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       </div>
    );
 }
