@@ -11,10 +11,22 @@ export default function Home() {
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
          {/* Fixed Header */}
          <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-800">
-            <div className="container mx-auto px-4 py-4 text-center">
-               <p className="text-sm text-zinc-400 tracking-wide">
-                  MyDotCalendar
-               </p>
+            <div className="container mx-auto px-4 py-3 relative flex items-center justify-center h-12">
+               <div className="absolute left-1/2 -translate-x-1/2 group">
+                  <Image
+                     src="/assets/logo.png"
+                     alt="Logo"
+                     width={36}
+                     height={36}
+                     className="cursor-pointer"
+                  />
+                  <span className="absolute right-full mr-0 top-1/2 -translate-y-1/2 text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
+                     My
+                  </span>
+                  <span className="absolute left-full ml-0 top-1/2 -translate-y-1/2 text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
+                     Calendar
+                  </span>
+               </div>
             </div>
          </header>
 
