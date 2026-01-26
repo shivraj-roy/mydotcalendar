@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import InstallationDialog from "@/components/InstallationDialog";
+import GoalInstallationDialog from "@/components/GoalInstallationDialog";
 
 export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
+   const [goalDialogOpen, setGoalDialogOpen] = useState(false);
 
    return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
@@ -44,53 +46,104 @@ export default function Home() {
                </p>
             </section>
 
-            {/* Calendar Card */}
-            <section className="max-w-md mx-auto mb-12 md:mb-20">
-               <div
-                  className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
-                  onClick={() => setDialogOpen(true)}
-               >
-                  <div className="text-center mb-4">
-                     <h2 className="text-xl font-semibold">Year Calendar</h2>
-                     <p className="text-sm text-zinc-400 mt-1">
-                        Track your year&apos;s progress
-                     </p>
-                  </div>
-
-                  {/* MacBook Mockup */}
-                  <div className="relative w-full aspect-[4/3] mb-4">
-                     <Image
-                        src="/my-dot-calendar.png"
-                        alt="Year Calendar Wallpaper Preview"
-                        fill
-                        className="object-contain"
-                        priority
-                     />
-                  </div>
-
-                  {/* Install Button */}
-                  <button
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        setDialogOpen(true);
-                     }}
-                     className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+            {/* Calendar Cards */}
+            <section className="max-w-4xl mx-auto mb-12 md:mb-20">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Year Calendar Card */}
+                  <div
+                     className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
+                     onClick={() => setDialogOpen(true)}
                   >
-                     <span>Install</span>
-                     <svg
-                        className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                     >
-                        <path
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                           strokeWidth={2}
-                           d="M9 5l7 7-7 7"
+                     <div className="text-center mb-4">
+                        <h2 className="text-xl font-semibold">Year Calendar</h2>
+                        <p className="text-sm text-zinc-400 mt-1">
+                           Track your year&apos;s progress
+                        </p>
+                     </div>
+
+                     {/* Preview */}
+                     <div className="relative w-full aspect-[4/3] mb-4">
+                        <Image
+                           src="/my-dot-calendar.png"
+                           alt="Year Calendar Wallpaper Preview"
+                           fill
+                           className="object-contain"
+                           priority
                         />
-                     </svg>
-                  </button>
+                     </div>
+
+                     {/* Install Button */}
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation();
+                           setDialogOpen(true);
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+                     >
+                        <span>Install</span>
+                        <svg
+                           className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+                           fill="none"
+                           stroke="currentColor"
+                           viewBox="0 0 24 24"
+                        >
+                           <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                           />
+                        </svg>
+                     </button>
+                  </div>
+
+                  {/* Goal Calendar Card */}
+                  <div
+                     className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
+                     onClick={() => setGoalDialogOpen(true)}
+                  >
+                     <div className="text-center mb-4">
+                        <h2 className="text-xl font-semibold">Goal Calendar</h2>
+                        <p className="text-sm text-zinc-400 mt-1">
+                           Track progress to any goal
+                        </p>
+                     </div>
+
+                     {/* Preview */}
+                     <div className="relative w-full aspect-[4/3] mb-4">
+                        <Image
+                           src="/goal calendar.png"
+                           alt="Goal Calendar Wallpaper Preview"
+                           fill
+                           className="object-contain"
+                           priority
+                        />
+                     </div>
+
+                     {/* Install Button */}
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation();
+                           setGoalDialogOpen(true);
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+                     >
+                        <span>Install</span>
+                        <svg
+                           className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+                           fill="none"
+                           stroke="currentColor"
+                           viewBox="0 0 24 24"
+                        >
+                           <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                           />
+                        </svg>
+                     </button>
+                  </div>
                </div>
             </section>
          </main>
@@ -112,8 +165,9 @@ export default function Home() {
             </div>
          </footer>
 
-         {/* Installation Dialog */}
+         {/* Installation Dialogs */}
          <InstallationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+         <GoalInstallationDialog open={goalDialogOpen} onOpenChange={setGoalDialogOpen} />
       </div>
    );
 }
