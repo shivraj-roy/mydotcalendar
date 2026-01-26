@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import InstallationDialog from "@/components/InstallationDialog";
-import GoalInstallationDialog from "@/components/GoalInstallationDialog";
+import WallpaperDialog from "@/components/WallpaperDialog";
+import CalendarCard from "@/components/CalendarCard";
 
 export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
@@ -16,10 +16,10 @@ export default function Home() {
             <div className="container mx-auto px-4 py-3 relative flex items-center justify-center h-12">
                <div className="absolute left-1/2 -translate-x-1/2 group">
                   <Image
-                     src="/assets/logo.png"
+                     src="/assets/dot-logo.png"
                      alt="Logo"
-                     width={36}
-                     height={36}
+                     width={46}
+                     height={46}
                      className="cursor-pointer"
                   />
                   <span className="absolute right-full mr-0 top-1/2 -translate-y-1/2 text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
@@ -36,9 +36,15 @@ export default function Home() {
             {/* Hero Section */}
             <section className="text-center mt-4 md:mt-8 mb-10 md:mb-16 max-w-4xl mx-auto">
                <h1 className="text-4xl md:text-7xl font-bold leading-[1.1]">
-                  <span className="">Minimal by design.</span>
+                  <span className="">
+                     Minimal by design
+                     <span className="text-[#ff6347]">.</span>{" "}
+                  </span>
                   <br />
-                  <span className="">Productive wallpapers.</span>
+                  <span className="">
+                     Productive wallpapers
+                     <span className="text-[#ff6347]">.</span>{" "}
+                  </span>
                </h1>
                <p className="text-lg md:text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
                   Your progress, at a glance. <br />
@@ -49,101 +55,18 @@ export default function Home() {
             {/* Calendar Cards */}
             <section className="max-w-4xl mx-auto mb-12 md:mb-20">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Year Calendar Card */}
-                  <div
-                     className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
+                  <CalendarCard
+                     title="Year"
+                     description="Track your year's progress"
+                     imageSrc="/my-dot-calendar.png"
                      onClick={() => setDialogOpen(true)}
-                  >
-                     <div className="text-center mb-4">
-                        <h2 className="text-xl font-semibold">Year Calendar</h2>
-                        <p className="text-sm text-zinc-400 mt-1">
-                           Track your year&apos;s progress
-                        </p>
-                     </div>
-
-                     {/* Preview */}
-                     <div className="relative w-full aspect-[4/3] mb-4">
-                        <Image
-                           src="/my-dot-calendar.png"
-                           alt="Year Calendar Wallpaper Preview"
-                           fill
-                           className="object-contain"
-                           priority
-                        />
-                     </div>
-
-                     {/* Install Button */}
-                     <button
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           setDialogOpen(true);
-                        }}
-                        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-                     >
-                        <span>Install</span>
-                        <svg
-                           className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                           fill="none"
-                           stroke="currentColor"
-                           viewBox="0 0 24 24"
-                        >
-                           <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                           />
-                        </svg>
-                     </button>
-                  </div>
-
-                  {/* Goal Calendar Card */}
-                  <div
-                     className="bg-zinc-900/50 p-6 border border-zinc-800 cursor-pointer hover:border-zinc-700 transition-colors"
+                  />
+                  <CalendarCard
+                     title="Goal"
+                     description="Track progress towards your goal"
+                     imageSrc="/goal calendar.png"
                      onClick={() => setGoalDialogOpen(true)}
-                  >
-                     <div className="text-center mb-4">
-                        <h2 className="text-xl font-semibold">Goal Calendar</h2>
-                        <p className="text-sm text-zinc-400 mt-1">
-                           Track progress to any goal
-                        </p>
-                     </div>
-
-                     {/* Preview */}
-                     <div className="relative w-full aspect-[4/3] mb-4">
-                        <Image
-                           src="/goal calendar.png"
-                           alt="Goal Calendar Wallpaper Preview"
-                           fill
-                           className="object-contain"
-                           priority
-                        />
-                     </div>
-
-                     {/* Install Button */}
-                     <button
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           setGoalDialogOpen(true);
-                        }}
-                        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-                     >
-                        <span>Install</span>
-                        <svg
-                           className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                           fill="none"
-                           stroke="currentColor"
-                           viewBox="0 0 24 24"
-                        >
-                           <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                           />
-                        </svg>
-                     </button>
-                  </div>
+                  />
                </div>
             </section>
          </main>
@@ -166,8 +89,16 @@ export default function Home() {
          </footer>
 
          {/* Installation Dialogs */}
-         <InstallationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-         <GoalInstallationDialog open={goalDialogOpen} onOpenChange={setGoalDialogOpen} />
+         <WallpaperDialog
+            type="year"
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+         />
+         <WallpaperDialog
+            type="goal"
+            open={goalDialogOpen}
+            onOpenChange={setGoalDialogOpen}
+         />
       </div>
    );
 }
