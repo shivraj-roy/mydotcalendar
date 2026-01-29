@@ -8,6 +8,7 @@ import CalendarCard from "@/components/CalendarCard";
 export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [goalDialogOpen, setGoalDialogOpen] = useState(false);
+   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
 
    return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
@@ -53,7 +54,7 @@ export default function Home() {
             </section>
 
             {/* Calendar Cards */}
-            <section className="max-w-4xl mx-auto mb-12 md:mb-20">
+            <section className="max-w-5xl mx-auto mb-12 md:mb-20">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CalendarCard
                      title="Year"
@@ -66,6 +67,12 @@ export default function Home() {
                      description="Track progress towards your goal"
                      imageSrc="/goal calendar.png"
                      onClick={() => setGoalDialogOpen(true)}
+                  />
+                  <CalendarCard
+                     title="Location"
+                     description="Your city in dot-art style"
+                     imageSrc="/location-map.png"
+                     onClick={() => setLocationDialogOpen(true)}
                   />
                </div>
             </section>
@@ -98,6 +105,11 @@ export default function Home() {
             type="goal"
             open={goalDialogOpen}
             onOpenChange={setGoalDialogOpen}
+         />
+         <WallpaperDialog
+            type="location"
+            open={locationDialogOpen}
+            onOpenChange={setLocationDialogOpen}
          />
       </div>
    );

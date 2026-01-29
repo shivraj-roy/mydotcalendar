@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
    Drawer,
    DrawerContent,
@@ -19,7 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DEVICE_RESOLUTIONS } from "@/lib/constants";
 
 // ============ Types ============
-type WallpaperType = "year" | "goal";
+type WallpaperType = "year" | "goal" | "location";
 type Theme = "dark" | "light";
 type Shape = "circle" | "square" | "rounded";
 type Layout = "year" | "month";
@@ -75,7 +75,19 @@ const DIALOG_CONFIG = {
       description:
          "Track your progress towards any goal with a visual countdown wallpaper.",
    },
+   location: {
+      title: "Location Map Setup",
+      description:
+         "Generate a dot-art map of your location. This is a static wallpaper - download it once and set it manually.",
+   },
 };
+
+const ZOOM_LEVELS = [
+   { value: "12", label: "Far (City overview)" },
+   { value: "14", label: "Medium (Neighborhood)" },
+   { value: "16", label: "Close (Streets)" },
+   { value: "18", label: "Very Close (Buildings)" },
+];
 
 // ============ Shared Sub-Components ============
 function StepHeader({ step, title }: { step: number; title: string }) {
@@ -534,18 +546,107 @@ export default function WallpaperDialog({
    const [deadlineMonth, setDeadlineMonth] = useState("");
    const [deadlineDay, setDeadlineDay] = useState("");
 
-   // Check if goal step 1 is complete
-   const isGoalStep1Complete = useMemo(() => {
-      if (type !== "goal") return true;
-      return (
-         goal.trim() !== "" &&
-         startYear !== "" &&
-         startMonth !== "" &&
-         startDay !== "" &&
-         deadlineYear !== "" &&
-         deadlineMonth !== "" &&
-         deadlineDay !== ""
+   // Location-specific state
+   const [location, setLocation] = useState("");
+   const [locationInput, setLocationInput] = useState("");
+   const [zoom, setZoom] = useState("14");
+   const [isLocating, setIsLocating] = useState(false);
+   const [suggestions, setSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
+   const [showSuggestions, setShowSuggestions] = useState(false);
+   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+   // Fetch location suggestions with debouncing
+   async function fetchSuggestions(query: string) {
+      if (query.length < 2) {
+         setSuggestions([]);
+         return;
+      }
+
+      try {
+         const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+         );
+         if (response.ok) {
+            const data = await response.json();
+            setSuggestions(data.features || []);
+         }
+      } catch (error) {
+         console.error("Failed to fetch suggestions:", error);
+      }
+   }
+
+   // Handle location input change with debouncing
+   function handleLocationInputChange(value: string) {
+      setLocationInput(value);
+      setShowSuggestions(true);
+
+      // Clear previous timeout
+      if (debounceRef.current) {
+         clearTimeout(debounceRef.current);
+      }
+
+      // Debounce API call (300ms)
+      debounceRef.current = setTimeout(() => {
+         fetchSuggestions(value);
+      }, 300);
+   }
+
+   // Handle suggestion selection
+   function selectSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+      const [lng, lat] = suggestion.center;
+      setLocation(`${lat},${lng}`);
+      setLocationInput(suggestion.place_name.split(",")[0]); // Show short name
+      setSuggestions([]);
+      setShowSuggestions(false);
+   }
+
+   // Get current location using browser geolocation
+   function getCurrentLocation() {
+      if (!navigator.geolocation) {
+         alert("Geolocation is not supported by your browser");
+         return;
+      }
+
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+         (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation(`${latitude.toFixed(6)},${longitude.toFixed(6)}`);
+            setLocationInput("Current Location");
+            setIsLocating(false);
+            setSuggestions([]);
+            setShowSuggestions(false);
+         },
+         (error) => {
+            setIsLocating(false);
+            if (error.code === error.PERMISSION_DENIED) {
+               alert("Location access denied. Please allow location access in your browser settings.");
+            } else {
+               alert("Could not get your location. Please try again or enter manually.");
+            }
+         },
+         { enableHighAccuracy: true, timeout: 10000 }
       );
+   }
+
+   // Check if step 1 is complete (for goal and location types)
+   const isStep1Complete = useMemo(() => {
+      if (type === "year") return true;
+      if (type === "goal") {
+         return (
+            goal.trim() !== "" &&
+            startYear !== "" &&
+            startMonth !== "" &&
+            startDay !== "" &&
+            deadlineYear !== "" &&
+            deadlineMonth !== "" &&
+            deadlineDay !== ""
+         );
+      }
+      if (type === "location") {
+         return location.trim() !== "";
+      }
+      return true;
    }, [
       type,
       goal,
@@ -555,6 +656,7 @@ export default function WallpaperDialog({
       deadlineYear,
       deadlineMonth,
       deadlineDay,
+      location,
    ]);
 
    // Format dates for goal
@@ -574,7 +676,7 @@ export default function WallpaperDialog({
 
    // Generate URL
    useEffect(() => {
-      if (type === "goal" && !isGoalStep1Complete) {
+      if (!isStep1Complete) {
          setGeneratedUrl("");
          return;
       }
@@ -590,18 +692,25 @@ export default function WallpaperDialog({
 
       if (type === "year") {
          if (layout !== "year") params.append("layout", layout);
-      } else {
+      } else if (type === "goal") {
          params.append("goal", goal);
          params.append("start_date", startDate);
          params.append("goal_date", deadlineDate);
+      } else if (type === "location") {
+         params.append("location", location);
+         if (zoom !== "14") params.append("zoom", zoom);
       }
 
       if (accentColor !== "ff6347") params.append("accent", accentColor);
       if (theme !== "dark") params.append("theme", theme);
       if (shape !== "circle") params.append("shape", shape);
 
-      const endpoint = type === "year" ? "/api/year" : "/api/goal";
-      setGeneratedUrl(`${baseUrl}${endpoint}?${params.toString()}`);
+      const endpoints = {
+         year: "/api/year",
+         goal: "/api/goal",
+         location: "/api/location",
+      };
+      setGeneratedUrl(`${baseUrl}${endpoints[type]}?${params.toString()}`);
    }, [
       type,
       device,
@@ -612,7 +721,9 @@ export default function WallpaperDialog({
       goal,
       startDate,
       deadlineDate,
-      isGoalStep1Complete,
+      location,
+      zoom,
+      isStep1Complete,
    ]);
 
    async function copyUrl() {
@@ -644,12 +755,13 @@ export default function WallpaperDialog({
                <div className="space-y-6 py-4">
                   {/* Step 1: Define Wallpaper */}
                   <div className="space-y-4">
-                     <StepHeader step={1} title="Define your Wallpaper" />
+                     <StepHeader step={1} title={type === "location" ? "Configure your Map" : "Define your Wallpaper"} />
                      <div className="ml-0 md:ml-9 space-y-4">
                         {/* Type-specific fields */}
-                        {type === "year" ? (
+                        {type === "year" && (
                            <LayoutSelector value={layout} onChange={setLayout} />
-                        ) : (
+                        )}
+                        {type === "goal" && (
                            <>
                               <div className="space-y-2">
                                  <FieldLabel>Goal</FieldLabel>
@@ -681,6 +793,75 @@ export default function WallpaperDialog({
                               />
                            </>
                         )}
+                        {type === "location" && (
+                           <>
+                              <div className="space-y-2">
+                                 <FieldLabel>Location</FieldLabel>
+                                 <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                       <input
+                                          type="text"
+                                          value={locationInput}
+                                          onChange={(e) => handleLocationInputChange(e.target.value)}
+                                          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                                          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                          placeholder="Search for a place..."
+                                          className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+                                       />
+                                       {/* Suggestions dropdown */}
+                                       {showSuggestions && suggestions.length > 0 && (
+                                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                             {suggestions.map((suggestion, index) => (
+                                                <button
+                                                   key={index}
+                                                   type="button"
+                                                   onClick={() => selectSuggestion(suggestion)}
+                                                   className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                >
+                                                   {suggestion.place_name}
+                                                </button>
+                                             ))}
+                                          </div>
+                                       )}
+                                    </div>
+                                    <button
+                                       onClick={getCurrentLocation}
+                                       disabled={isLocating}
+                                       className="px-3 py-2 bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                                       title="Use current location"
+                                    >
+                                       {isLocating ? (
+                                          <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                          </svg>
+                                       ) : (
+                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          </svg>
+                                       )}
+                                       <span className="hidden md:inline">{isLocating ? "Locating..." : "Use Current"}</span>
+                                    </button>
+                                 </div>
+                              </div>
+                              <div className="space-y-2">
+                                 <FieldLabel>Zoom Level</FieldLabel>
+                                 <Select value={zoom} onValueChange={setZoom}>
+                                    <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
+                                       <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
+                                       {ZOOM_LEVELS.map((level) => (
+                                          <SelectItem key={level.value} value={level.value}>
+                                             {level.label}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
+                              </div>
+                           </>
+                        )}
 
                         {/* Shared fields */}
                         <DeviceSelector value={device} onChange={setDevice} />
@@ -690,26 +871,97 @@ export default function WallpaperDialog({
                            value={accentColor}
                            onChange={setAccentColor}
                            label={
-                              type === "year"
+                              type === "location"
+                                 ? "Accent Color (Your Location)"
+                                 : type === "year"
                                  ? "Accent Color (Today's Dot)"
                                  : "Accent Color (Current Day)"
                            }
                         />
-                        <Preview
-                           url={generatedUrl}
-                           alt={`${type === "year" ? "Year" : "Goal"} Wallpaper Preview`}
-                        />
+                        {/* Preview - for location show placeholder when no location */}
+                        {type === "location" ? (
+                           <div className="space-y-2">
+                              <FieldLabel>Preview</FieldLabel>
+                              <div className="relative w-full aspect-video bg-zinc-950 overflow-hidden border border-zinc-800 flex items-center justify-center">
+                                 {location && generatedUrl ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={generatedUrl} alt="Location Wallpaper Preview" className="w-full h-full object-contain" />
+                                 ) : (
+                                    <div className="text-center text-zinc-500">
+                                       <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                       </svg>
+                                       <p className="text-sm">Set your location to see preview</p>
+                                    </div>
+                                 )}
+                              </div>
+                           </div>
+                        ) : (
+                           <Preview
+                              url={generatedUrl}
+                              alt={`${type === "year" ? "Year" : "Goal"} Wallpaper Preview`}
+                           />
+                        )}
                      </div>
                   </div>
 
-                  {/* Step 2 & 3 - Shared */}
-                  <AutomationStep />
-                  <ShortcutStep
-                     url={generatedUrl}
-                     urlReady={type === "year" || isGoalStep1Complete}
-                     copied={copied}
-                     onCopy={copyUrl}
-                  />
+                  {/* Step 2 & 3 - Only for year and goal (dynamic wallpapers) */}
+                  {type !== "location" && (
+                     <>
+                        <AutomationStep />
+                        <ShortcutStep
+                           url={generatedUrl}
+                           urlReady={isStep1Complete}
+                           copied={copied}
+                           onCopy={copyUrl}
+                        />
+                     </>
+                  )}
+
+                  {/* Location: Download button - always visible */}
+                  {type === "location" && (
+                     <div className="space-y-4">
+                        <StepHeader step={2} title="Download Wallpaper" />
+                        <div className="ml-0 md:ml-9 space-y-4">
+                           <p className="text-sm text-zinc-400">
+                              {location
+                                 ? "Your dot map is ready! Download it and set it as your wallpaper manually."
+                                 : "Set your location above to generate and download your wallpaper."
+                              }
+                           </p>
+                           {location ? (
+                              <a
+                                 href={generatedUrl}
+                                 download={`dotmap-${locationInput.replace(/[^a-zA-Z0-9]/g, "-") || "location"}.png`}
+                                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors cursor-pointer"
+                              >
+                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                 </svg>
+                                 Download Wallpaper
+                              </a>
+                           ) : (
+                              <button
+                                 disabled
+                                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-700 text-zinc-400 text-sm font-medium cursor-not-allowed opacity-50"
+                              >
+                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                 </svg>
+                                 Download Wallpaper
+                              </button>
+                           )}
+                           <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
+                              <p className="text-blue-400 font-medium">How to set:</p>
+                              <p className="text-zinc-400 mt-1">
+                                 System Settings → Wallpaper → Add Photo → Select downloaded image → Set to{" "}
+                                 <span className="text-white">&quot;Fill Screen&quot;</span>
+                              </p>
+                           </div>
+                        </div>
+                     </div>
+                  )}
                </div>
             </ScrollArea>
 
