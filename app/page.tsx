@@ -8,7 +8,7 @@ import CalendarCard from "@/components/CalendarCard";
 export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [goalDialogOpen, setGoalDialogOpen] = useState(false);
-   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+   const [journeyDialogOpen, setJourneyDialogOpen] = useState(false);
 
    return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
@@ -69,10 +69,10 @@ export default function Home() {
                      onClick={() => setGoalDialogOpen(true)}
                   />
                   <CalendarCard
-                     title="Location"
-                     description="Your city in dot-art style"
-                     imageSrc="/location-map.png"
-                     onClick={() => setLocationDialogOpen(true)}
+                     title="Journey"
+                     description="Track progress to your destination"
+                     imageSrc="/journey-calendar.png"
+                     onClick={() => setJourneyDialogOpen(true)}
                   />
                </div>
             </section>
@@ -107,9 +107,9 @@ export default function Home() {
             onOpenChange={setGoalDialogOpen}
          />
          <WallpaperDialog
-            type="location"
-            open={locationDialogOpen}
-            onOpenChange={setLocationDialogOpen}
+            type="journey"
+            open={journeyDialogOpen}
+            onOpenChange={setJourneyDialogOpen}
          />
       </div>
    );

@@ -19,7 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DEVICE_RESOLUTIONS } from "@/lib/constants";
 
 // ============ Types ============
-type WallpaperType = "year" | "goal" | "location";
+type WallpaperType = "year" | "goal" | "location" | "journey";
 type Theme = "dark" | "light";
 type Shape = "circle" | "square" | "rounded";
 type Layout = "year" | "month";
@@ -79,6 +79,11 @@ const DIALOG_CONFIG = {
       title: "Location Map Setup",
       description:
          "Generate a dot-art map of your location. This is a static wallpaper - download it once and set it manually.",
+   },
+   journey: {
+      title: "Journey Calendar Setup",
+      description:
+         "Track your progress from origin to destination. Set up daily automation to update your wallpaper as you approach your target date.",
    },
 };
 
@@ -555,6 +560,23 @@ export default function WallpaperDialog({
    const [showSuggestions, setShowSuggestions] = useState(false);
    const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
+   // Journey-specific state
+   const [originLocation, setOriginLocation] = useState("");
+   const [originLocationInput, setOriginLocationInput] = useState("");
+   const [destinationLocation, setDestinationLocation] = useState("");
+   const [destinationLocationInput, setDestinationLocationInput] = useState("");
+   const [targetDateYear, setTargetDateYear] = useState("");
+   const [targetDateMonth, setTargetDateMonth] = useState("");
+   const [targetDateDay, setTargetDateDay] = useState("");
+   const [journeyZoom, setJourneyZoom] = useState("16"); // Default to Close (Streets)
+   const [isLocatingOrigin, setIsLocatingOrigin] = useState(false);
+   const [originSuggestions, setOriginSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
+   const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
+   const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
+   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
+   const originDebounceRef = useRef<NodeJS.Timeout | null>(null);
+   const destinationDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
    // Fetch location suggestions with debouncing
    async function fetchSuggestions(query: string) {
       if (query.length < 2) {
@@ -629,7 +651,145 @@ export default function WallpaperDialog({
       );
    }
 
-   // Check if step 1 is complete (for goal and location types)
+   // Journey location autocomplete helpers
+   async function fetchOriginSuggestions(query: string) {
+      if (query.length < 2) {
+         setOriginSuggestions([]);
+         return;
+      }
+
+      try {
+         const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+         );
+         if (response.ok) {
+            const data = await response.json();
+            setOriginSuggestions(data.features || []);
+         }
+      } catch (error) {
+         console.error("Failed to fetch origin suggestions:", error);
+      }
+   }
+
+   async function fetchDestinationSuggestions(query: string) {
+      if (query.length < 2) {
+         setDestinationSuggestions([]);
+         return;
+      }
+
+      try {
+         const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+         );
+         if (response.ok) {
+            const data = await response.json();
+            setDestinationSuggestions(data.features || []);
+         }
+      } catch (error) {
+         console.error("Failed to fetch destination suggestions:", error);
+      }
+   }
+
+   function handleOriginInputChange(value: string) {
+      setOriginLocationInput(value);
+      setShowOriginSuggestions(true);
+
+      if (originDebounceRef.current) {
+         clearTimeout(originDebounceRef.current);
+      }
+
+      originDebounceRef.current = setTimeout(() => {
+         fetchOriginSuggestions(value);
+      }, 300);
+   }
+
+   function handleDestinationInputChange(value: string) {
+      setDestinationLocationInput(value);
+      setShowDestinationSuggestions(true);
+
+      if (destinationDebounceRef.current) {
+         clearTimeout(destinationDebounceRef.current);
+      }
+
+      destinationDebounceRef.current = setTimeout(() => {
+         fetchDestinationSuggestions(value);
+      }, 300);
+   }
+
+   function selectOriginSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+      const [lng, lat] = suggestion.center;
+      // Store the full place name for API (better for geocoding)
+      setOriginLocation(suggestion.place_name);
+      // Store short name for display in input
+      setOriginLocationInput(suggestion.place_name.split(",")[0]);
+      setOriginSuggestions([]);
+      setShowOriginSuggestions(false);
+   }
+
+   function selectDestinationSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+      const [lng, lat] = suggestion.center;
+      // Store the full place name for API (better for geocoding)
+      setDestinationLocation(suggestion.place_name);
+      // Store short name for display in input
+      setDestinationLocationInput(suggestion.place_name.split(",")[0]);
+      setDestinationSuggestions([]);
+      setShowDestinationSuggestions(false);
+   }
+
+   // Get current location for origin using browser geolocation
+   async function getCurrentOriginLocation() {
+      if (!navigator.geolocation) {
+         alert("Geolocation is not supported by your browser");
+         return;
+      }
+
+      setIsLocatingOrigin(true);
+      navigator.geolocation.getCurrentPosition(
+         async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            // Reverse geocode to get location name
+            try {
+               const response = await fetch(
+                  `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=1`
+               );
+               if (response.ok) {
+                  const data = await response.json();
+                  if (data.features && data.features.length > 0) {
+                     const placeName = data.features[0].place_name;
+                     setOriginLocation(placeName);
+                     setOriginLocationInput(placeName.split(",")[0]);
+                  } else {
+                     setOriginLocation(`${latitude},${longitude}`);
+                     setOriginLocationInput("Current Location");
+                  }
+               } else {
+                  setOriginLocation(`${latitude},${longitude}`);
+                  setOriginLocationInput("Current Location");
+               }
+            } catch (error) {
+               console.error("Reverse geocoding failed:", error);
+               setOriginLocation(`${latitude},${longitude}`);
+               setOriginLocationInput("Current Location");
+            }
+
+            setIsLocatingOrigin(false);
+            setOriginSuggestions([]);
+            setShowOriginSuggestions(false);
+         },
+         (error) => {
+            setIsLocatingOrigin(false);
+            if (error.code === error.PERMISSION_DENIED) {
+               alert("Location access denied. Please allow location access in your browser settings.");
+            } else {
+               alert("Could not get your location. Please try again or enter manually.");
+            }
+         },
+         { enableHighAccuracy: true, timeout: 10000 }
+      );
+   }
+
+   // Check if step 1 is complete (for goal, location, and journey types)
    const isStep1Complete = useMemo(() => {
       if (type === "year") return true;
       if (type === "goal") {
@@ -646,6 +806,15 @@ export default function WallpaperDialog({
       if (type === "location") {
          return location.trim() !== "";
       }
+      if (type === "journey") {
+         return (
+            originLocation.trim() !== "" &&
+            destinationLocation.trim() !== "" &&
+            targetDateYear !== "" &&
+            targetDateMonth !== "" &&
+            targetDateDay !== ""
+         );
+      }
       return true;
    }, [
       type,
@@ -657,6 +826,11 @@ export default function WallpaperDialog({
       deadlineMonth,
       deadlineDay,
       location,
+      originLocation,
+      destinationLocation,
+      targetDateYear,
+      targetDateMonth,
+      targetDateDay,
    ]);
 
    // Format dates for goal
@@ -673,6 +847,14 @@ export default function WallpaperDialog({
       }
       return "";
    }, [deadlineYear, deadlineMonth, deadlineDay]);
+
+   // Format target date for journey
+   const targetDate = useMemo(() => {
+      if (targetDateYear && targetDateMonth && targetDateDay) {
+         return `${targetDateYear}-${targetDateMonth}-${targetDateDay}`;
+      }
+      return "";
+   }, [targetDateYear, targetDateMonth, targetDateDay]);
 
    // Generate URL
    useEffect(() => {
@@ -699,6 +881,11 @@ export default function WallpaperDialog({
       } else if (type === "location") {
          params.append("location", location);
          if (zoom !== "14") params.append("zoom", zoom);
+      } else if (type === "journey") {
+         params.append("origin", originLocation);
+         params.append("destination", destinationLocation);
+         params.append("target_date", targetDate);
+         if (journeyZoom !== "16") params.append("zoom", journeyZoom);
       }
 
       if (accentColor !== "ff6347") params.append("accent", accentColor);
@@ -709,6 +896,7 @@ export default function WallpaperDialog({
          year: "/api/year",
          goal: "/api/goal",
          location: "/api/location",
+         journey: "/api/journey",
       };
       setGeneratedUrl(`${baseUrl}${endpoints[type]}?${params.toString()}`);
    }, [
@@ -723,6 +911,10 @@ export default function WallpaperDialog({
       deadlineDate,
       location,
       zoom,
+      originLocation,
+      destinationLocation,
+      targetDate,
+      journeyZoom,
       isStep1Complete,
    ]);
 
@@ -755,7 +947,7 @@ export default function WallpaperDialog({
                <div className="space-y-6 py-4">
                   {/* Step 1: Define Wallpaper */}
                   <div className="space-y-4">
-                     <StepHeader step={1} title={type === "location" ? "Configure your Map" : "Define your Wallpaper"} />
+                     <StepHeader step={1} title={type === "location" ? "Configure your Map" : type === "journey" ? "Configure your Journey" : "Define your Wallpaper"} />
                      <div className="ml-0 md:ml-9 space-y-4">
                         {/* Type-specific fields */}
                         {type === "year" && (
@@ -862,6 +1054,111 @@ export default function WallpaperDialog({
                               </div>
                            </>
                         )}
+                        {type === "journey" && (
+                           <>
+                              <div className="space-y-2">
+                                 <FieldLabel>Origin Location</FieldLabel>
+                                 <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                       <input
+                                          type="text"
+                                          value={originLocationInput}
+                                          onChange={(e) => handleOriginInputChange(e.target.value)}
+                                          onFocus={() => originSuggestions.length > 0 && setShowOriginSuggestions(true)}
+                                          onBlur={() => setTimeout(() => setShowOriginSuggestions(false), 200)}
+                                          placeholder="e.g. New York, NY"
+                                          className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+                                       />
+                                       {showOriginSuggestions && originSuggestions.length > 0 && (
+                                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                             {originSuggestions.map((suggestion, index) => (
+                                                <button
+                                                   key={index}
+                                                   type="button"
+                                                   onClick={() => selectOriginSuggestion(suggestion)}
+                                                   className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                >
+                                                   {suggestion.place_name}
+                                                </button>
+                                             ))}
+                                          </div>
+                                       )}
+                                    </div>
+                                    <button
+                                       onClick={getCurrentOriginLocation}
+                                       disabled={isLocatingOrigin}
+                                       className="px-3 py-2 bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                                       title="Use current location"
+                                    >
+                                       {isLocatingOrigin ? (
+                                          <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                          </svg>
+                                       ) : (
+                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          </svg>
+                                       )}
+                                       <span className="hidden md:inline">{isLocatingOrigin ? "Locating..." : "Use Current"}</span>
+                                    </button>
+                                 </div>
+                              </div>
+                              <div className="space-y-2">
+                                 <FieldLabel>Destination Location</FieldLabel>
+                                 <div className="relative">
+                                    <input
+                                       type="text"
+                                       value={destinationLocationInput}
+                                       onChange={(e) => handleDestinationInputChange(e.target.value)}
+                                       onFocus={() => destinationSuggestions.length > 0 && setShowDestinationSuggestions(true)}
+                                       onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 200)}
+                                       placeholder="e.g. Los Angeles, CA"
+                                       className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+                                    />
+                                    {showDestinationSuggestions && destinationSuggestions.length > 0 && (
+                                       <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                          {destinationSuggestions.map((suggestion, index) => (
+                                             <button
+                                                key={index}
+                                                type="button"
+                                                onClick={() => selectDestinationSuggestion(suggestion)}
+                                                className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                             >
+                                                {suggestion.place_name}
+                                             </button>
+                                          ))}
+                                       </div>
+                                    )}
+                                 </div>
+                              </div>
+                              <DateSelector
+                                 label="Target Date"
+                                 year={targetDateYear}
+                                 month={targetDateMonth}
+                                 day={targetDateDay}
+                                 onYearChange={setTargetDateYear}
+                                 onMonthChange={setTargetDateMonth}
+                                 onDayChange={setTargetDateDay}
+                              />
+                              <div className="space-y-2">
+                                 <FieldLabel>Zoom Level</FieldLabel>
+                                 <Select value={journeyZoom} onValueChange={setJourneyZoom}>
+                                    <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
+                                       <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
+                                       {ZOOM_LEVELS.map((level) => (
+                                          <SelectItem key={level.value} value={level.value}>
+                                             {level.label}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
+                              </div>
+                           </>
+                        )}
 
                         {/* Shared fields */}
                         <DeviceSelector value={device} onChange={setDevice} />
@@ -875,6 +1172,8 @@ export default function WallpaperDialog({
                                  ? "Accent Color (Your Location)"
                                  : type === "year"
                                  ? "Accent Color (Today's Dot)"
+                                 : type === "journey"
+                                 ? "Accent Color (Markers & Status)"
                                  : "Accent Color (Current Day)"
                            }
                         />
@@ -900,7 +1199,7 @@ export default function WallpaperDialog({
                         ) : (
                            <Preview
                               url={generatedUrl}
-                              alt={`${type === "year" ? "Year" : "Goal"} Wallpaper Preview`}
+                              alt={`${type === "year" ? "Year" : type === "goal" ? "Goal" : "Journey"} Wallpaper Preview`}
                            />
                         )}
                      </div>
