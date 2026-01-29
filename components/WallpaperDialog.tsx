@@ -196,10 +196,16 @@ function ThemeSelector({
       <div className="space-y-2">
          <FieldLabel>Theme</FieldLabel>
          <div className="flex gap-2">
-            <ToggleButton selected={value === "dark"} onClick={() => onChange("dark")}>
+            <ToggleButton
+               selected={value === "dark"}
+               onClick={() => onChange("dark")}
+            >
                Dark
             </ToggleButton>
-            <ToggleButton selected={value === "light"} onClick={() => onChange("light")}>
+            <ToggleButton
+               selected={value === "light"}
+               onClick={() => onChange("light")}
+            >
                Light
             </ToggleButton>
          </div>
@@ -385,12 +391,12 @@ function AutomationStep() {
                   Shortcuts
                </a>{" "}
                app ➡︎ Go to{" "}
-               <span className="text-white font-medium">Automation</span> tab ➡︎ New
-               Automation ➡︎{" "}
-               <span className="text-white font-medium">Time of Day</span> ➡︎ 6:00 AM
-               ➡︎ Repeat{" "}
-               <span className="text-white font-medium">&quot;Daily&quot;</span> ➡︎
-               Select{" "}
+               <span className="text-white font-medium">Automation</span> tab ➡︎
+               New Automation ➡︎{" "}
+               <span className="text-white font-medium">Time of Day</span> ➡︎
+               6:00 AM ➡︎ Repeat{" "}
+               <span className="text-white font-medium">&quot;Daily&quot;</span>{" "}
+               ➡︎ Select{" "}
                <span className="text-white font-medium">
                   &quot;Run Immediately&quot;
                </span>{" "}
@@ -424,9 +430,20 @@ function ShortcutStep({
             </p>
 
             <div className="space-y-3">
+               <p className="text-sm">
+                  <span className="text-zinc-500">Step 1: </span>{" "}
+                  <span className="text-white font-medium">
+                     &quot;Date&quot;
+                  </span>{" "}
+                  <span className="text-zinc-400">
+                     ➡︎ Add a &quot;Date&quot; action and set it to &quot;Current
+                     Date&quot;
+                  </span>
+               </p>
+
                <div className="space-y-2">
                   <p className="text-sm">
-                     <span className="text-zinc-500">Step 1: </span>{" "}
+                     <span className="text-zinc-500">Step 2: </span>{" "}
                      <span className="text-white font-medium">
                         &quot;Get Contents of URL&quot;
                      </span>{" "}
@@ -454,8 +471,25 @@ function ShortcutStep({
                   </div>
                </div>
 
+               <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
+                  <p className="text-blue-400 font-medium">
+                     Important - You Must Add This:
+                  </p>
+                  <p className="text-zinc-400 mt-1">
+                     After pasting the URL above,{" "}
+                     <span className="text-orange-400 font-semibold">you must add</span>{" "}
+                     <code className="px-1.5 py-0.5 bg-zinc-800 text-orange-400 rounded text-xs font-mono">
+                        &ts=&#91;Current Date&#93;
+                     </code>{" "}
+                     at the end of the URL.
+                  </p>
+                  <p className="text-zinc-500 mt-2 text-xs">
+                     Without this, macOS won&apos;t recognize the new wallpaper each day and automatic updates will not work.
+                  </p>
+               </div>
+
                <p className="text-sm">
-                  <span className="text-zinc-500">Step 2: </span>{" "}
+                  <span className="text-zinc-500">Step 3: </span>{" "}
                   <span className="text-white font-medium">
                      &quot;Set Wallpaper Photo&quot;
                   </span>
@@ -483,8 +517,8 @@ function ShortcutStep({
                      </span>
                   </p>
                   <a
-                     href="/assets/Set My Dot Wallpaper.shortcut"
-                     download="Set My Dot Wallpaper.shortcut"
+                     href="/assets/Set My Dot Calendar Wallpaper.shortcut"
+                     download="Set My Dot Calendar Wallpaper.shortcut"
                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-sm transition-colors cursor-pointer shrink-0"
                   >
                      <svg
@@ -504,8 +538,8 @@ function ShortcutStep({
                   </a>
                </div>
                <p className="text-xs text-zinc-500 mt-2">
-                  After downloading, double-click to import into Shortcuts app. Then
-                  copy the URL above and paste it into the shortcut.
+                  After downloading, double-click to import into Shortcuts app.
+                  Then copy the URL above and paste it into the shortcut.
                </p>
             </div>
 
@@ -513,7 +547,8 @@ function ShortcutStep({
                <p className="text-blue-400 font-medium">Important:</p>
                <p className="text-zinc-400 mt-1">
                   In System Setting&#39;s{" "}
-                  <span className="text-white">&quot;Wallpaper &quot;</span>, set to{" "}
+                  <span className="text-white">&quot;Wallpaper &quot;</span>,
+                  set to{" "}
                   <span className="text-white">&quot;Fill Screen&quot;</span>.
                </p>
                <p className="text-zinc-500 mt-2 text-xs">
@@ -556,7 +591,9 @@ export default function WallpaperDialog({
    const [locationInput, setLocationInput] = useState("");
    const [zoom, setZoom] = useState("14");
    const [isLocating, setIsLocating] = useState(false);
-   const [suggestions, setSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
+   const [suggestions, setSuggestions] = useState<
+      Array<{ place_name: string; center: [number, number] }>
+   >([]);
    const [showSuggestions, setShowSuggestions] = useState(false);
    const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -570,10 +607,15 @@ export default function WallpaperDialog({
    const [targetDateDay, setTargetDateDay] = useState("");
    const [journeyZoom, setJourneyZoom] = useState("16"); // Default to Close (Streets)
    const [isLocatingOrigin, setIsLocatingOrigin] = useState(false);
-   const [originSuggestions, setOriginSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
-   const [destinationSuggestions, setDestinationSuggestions] = useState<Array<{ place_name: string; center: [number, number] }>>([]);
+   const [originSuggestions, setOriginSuggestions] = useState<
+      Array<{ place_name: string; center: [number, number] }>
+   >([]);
+   const [destinationSuggestions, setDestinationSuggestions] = useState<
+      Array<{ place_name: string; center: [number, number] }>
+   >([]);
    const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
-   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
+   const [showDestinationSuggestions, setShowDestinationSuggestions] =
+      useState(false);
    const originDebounceRef = useRef<NodeJS.Timeout | null>(null);
    const destinationDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -586,7 +628,7 @@ export default function WallpaperDialog({
 
       try {
          const response = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`,
          );
          if (response.ok) {
             const data = await response.json();
@@ -614,7 +656,10 @@ export default function WallpaperDialog({
    }
 
    // Handle suggestion selection
-   function selectSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+   function selectSuggestion(suggestion: {
+      place_name: string;
+      center: [number, number];
+   }) {
       const [lng, lat] = suggestion.center;
       setLocation(`${lat},${lng}`);
       setLocationInput(suggestion.place_name.split(",")[0]); // Show short name
@@ -642,12 +687,16 @@ export default function WallpaperDialog({
          (error) => {
             setIsLocating(false);
             if (error.code === error.PERMISSION_DENIED) {
-               alert("Location access denied. Please allow location access in your browser settings.");
+               alert(
+                  "Location access denied. Please allow location access in your browser settings.",
+               );
             } else {
-               alert("Could not get your location. Please try again or enter manually.");
+               alert(
+                  "Could not get your location. Please try again or enter manually.",
+               );
             }
          },
-         { enableHighAccuracy: true, timeout: 10000 }
+         { enableHighAccuracy: true, timeout: 10000 },
       );
    }
 
@@ -660,7 +709,7 @@ export default function WallpaperDialog({
 
       try {
          const response = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`,
          );
          if (response.ok) {
             const data = await response.json();
@@ -679,7 +728,7 @@ export default function WallpaperDialog({
 
       try {
          const response = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=5&types=place,locality,neighborhood,address`,
          );
          if (response.ok) {
             const data = await response.json();
@@ -716,7 +765,10 @@ export default function WallpaperDialog({
       }, 300);
    }
 
-   function selectOriginSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+   function selectOriginSuggestion(suggestion: {
+      place_name: string;
+      center: [number, number];
+   }) {
       const [lng, lat] = suggestion.center;
       // Store the full place name for API (better for geocoding)
       setOriginLocation(suggestion.place_name);
@@ -726,7 +778,10 @@ export default function WallpaperDialog({
       setShowOriginSuggestions(false);
    }
 
-   function selectDestinationSuggestion(suggestion: { place_name: string; center: [number, number] }) {
+   function selectDestinationSuggestion(suggestion: {
+      place_name: string;
+      center: [number, number];
+   }) {
       const [lng, lat] = suggestion.center;
       // Store the full place name for API (better for geocoding)
       setDestinationLocation(suggestion.place_name);
@@ -751,7 +806,7 @@ export default function WallpaperDialog({
             // Reverse geocode to get location name
             try {
                const response = await fetch(
-                  `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=1`
+                  `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=pk.eyJ1Ijoic2hpdnJhai1yb3kiLCJhIjoiY21rdXltZDluMDAzeTNmcXprNTU3ejNpYSJ9.Uc1ZtL6Q_ZgsyxEEIOAKHg&limit=1`,
                );
                if (response.ok) {
                   const data = await response.json();
@@ -780,12 +835,16 @@ export default function WallpaperDialog({
          (error) => {
             setIsLocatingOrigin(false);
             if (error.code === error.PERMISSION_DENIED) {
-               alert("Location access denied. Please allow location access in your browser settings.");
+               alert(
+                  "Location access denied. Please allow location access in your browser settings.",
+               );
             } else {
-               alert("Could not get your location. Please try again or enter manually.");
+               alert(
+                  "Could not get your location. Please try again or enter manually.",
+               );
             }
          },
-         { enableHighAccuracy: true, timeout: 10000 }
+         { enableHighAccuracy: true, timeout: 10000 },
       );
    }
 
@@ -937,7 +996,9 @@ export default function WallpaperDialog({
                <DrawerTitle className="text-xl font-semibold">
                   {config.title}
                </DrawerTitle>
-               <p className="text-sm text-zinc-400 mt-2">{config.description}</p>
+               <p className="text-sm text-zinc-400 mt-2">
+                  {config.description}
+               </p>
             </DrawerHeader>
 
             <ScrollArea
@@ -947,11 +1008,23 @@ export default function WallpaperDialog({
                <div className="space-y-6 py-4">
                   {/* Step 1: Define Wallpaper */}
                   <div className="space-y-4">
-                     <StepHeader step={1} title={type === "location" ? "Configure your Map" : type === "journey" ? "Configure your Journey" : "Define your Wallpaper"} />
+                     <StepHeader
+                        step={1}
+                        title={
+                           type === "location"
+                              ? "Configure your Map"
+                              : type === "journey"
+                                ? "Configure your Journey"
+                                : "Define your Wallpaper"
+                        }
+                     />
                      <div className="ml-0 md:ml-9 space-y-4">
                         {/* Type-specific fields */}
                         {type === "year" && (
-                           <LayoutSelector value={layout} onChange={setLayout} />
+                           <LayoutSelector
+                              value={layout}
+                              onChange={setLayout}
+                           />
                         )}
                         {type === "goal" && (
                            <>
@@ -994,27 +1067,46 @@ export default function WallpaperDialog({
                                        <input
                                           type="text"
                                           value={locationInput}
-                                          onChange={(e) => handleLocationInputChange(e.target.value)}
-                                          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                                          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                          onChange={(e) =>
+                                             handleLocationInputChange(
+                                                e.target.value,
+                                             )
+                                          }
+                                          onFocus={() =>
+                                             suggestions.length > 0 &&
+                                             setShowSuggestions(true)
+                                          }
+                                          onBlur={() =>
+                                             setTimeout(
+                                                () => setShowSuggestions(false),
+                                                200,
+                                             )
+                                          }
                                           placeholder="Search for a place..."
                                           className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
                                        />
                                        {/* Suggestions dropdown */}
-                                       {showSuggestions && suggestions.length > 0 && (
-                                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
-                                             {suggestions.map((suggestion, index) => (
-                                                <button
-                                                   key={index}
-                                                   type="button"
-                                                   onClick={() => selectSuggestion(suggestion)}
-                                                   className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
-                                                >
-                                                   {suggestion.place_name}
-                                                </button>
-                                             ))}
-                                          </div>
-                                       )}
+                                       {showSuggestions &&
+                                          suggestions.length > 0 && (
+                                             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                                {suggestions.map(
+                                                   (suggestion, index) => (
+                                                      <button
+                                                         key={index}
+                                                         type="button"
+                                                         onClick={() =>
+                                                            selectSuggestion(
+                                                               suggestion,
+                                                            )
+                                                         }
+                                                         className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                      >
+                                                         {suggestion.place_name}
+                                                      </button>
+                                                   ),
+                                                )}
+                                             </div>
+                                          )}
                                     </div>
                                     <button
                                        onClick={getCurrentLocation}
@@ -1023,17 +1115,51 @@ export default function WallpaperDialog({
                                        title="Use current location"
                                     >
                                        {isLocating ? (
-                                          <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                          <svg
+                                             className="w-5 h-5 animate-spin"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                          >
+                                             <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                             />
+                                             <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                             />
                                           </svg>
                                        ) : (
-                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          <svg
+                                             className="w-5 h-5"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                          >
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                             />
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                             />
                                           </svg>
                                        )}
-                                       <span className="hidden md:inline">{isLocating ? "Locating..." : "Use Current"}</span>
+                                       <span className="hidden md:inline">
+                                          {isLocating
+                                             ? "Locating..."
+                                             : "Use Current"}
+                                       </span>
                                     </button>
                                  </div>
                               </div>
@@ -1045,7 +1171,10 @@ export default function WallpaperDialog({
                                     </SelectTrigger>
                                     <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
                                        {ZOOM_LEVELS.map((level) => (
-                                          <SelectItem key={level.value} value={level.value}>
+                                          <SelectItem
+                                             key={level.value}
+                                             value={level.value}
+                                          >
                                              {level.label}
                                           </SelectItem>
                                        ))}
@@ -1063,26 +1192,48 @@ export default function WallpaperDialog({
                                        <input
                                           type="text"
                                           value={originLocationInput}
-                                          onChange={(e) => handleOriginInputChange(e.target.value)}
-                                          onFocus={() => originSuggestions.length > 0 && setShowOriginSuggestions(true)}
-                                          onBlur={() => setTimeout(() => setShowOriginSuggestions(false), 200)}
+                                          onChange={(e) =>
+                                             handleOriginInputChange(
+                                                e.target.value,
+                                             )
+                                          }
+                                          onFocus={() =>
+                                             originSuggestions.length > 0 &&
+                                             setShowOriginSuggestions(true)
+                                          }
+                                          onBlur={() =>
+                                             setTimeout(
+                                                () =>
+                                                   setShowOriginSuggestions(
+                                                      false,
+                                                   ),
+                                                200,
+                                             )
+                                          }
                                           placeholder="e.g. New York, NY"
                                           className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
                                        />
-                                       {showOriginSuggestions && originSuggestions.length > 0 && (
-                                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
-                                             {originSuggestions.map((suggestion, index) => (
-                                                <button
-                                                   key={index}
-                                                   type="button"
-                                                   onClick={() => selectOriginSuggestion(suggestion)}
-                                                   className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
-                                                >
-                                                   {suggestion.place_name}
-                                                </button>
-                                             ))}
-                                          </div>
-                                       )}
+                                       {showOriginSuggestions &&
+                                          originSuggestions.length > 0 && (
+                                             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                                {originSuggestions.map(
+                                                   (suggestion, index) => (
+                                                      <button
+                                                         key={index}
+                                                         type="button"
+                                                         onClick={() =>
+                                                            selectOriginSuggestion(
+                                                               suggestion,
+                                                            )
+                                                         }
+                                                         className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                      >
+                                                         {suggestion.place_name}
+                                                      </button>
+                                                   ),
+                                                )}
+                                             </div>
+                                          )}
                                     </div>
                                     <button
                                        onClick={getCurrentOriginLocation}
@@ -1091,17 +1242,51 @@ export default function WallpaperDialog({
                                        title="Use current location"
                                     >
                                        {isLocatingOrigin ? (
-                                          <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                          <svg
+                                             className="w-5 h-5 animate-spin"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                          >
+                                             <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                             />
+                                             <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                             />
                                           </svg>
                                        ) : (
-                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          <svg
+                                             className="w-5 h-5"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                          >
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                             />
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                             />
                                           </svg>
                                        )}
-                                       <span className="hidden md:inline">{isLocatingOrigin ? "Locating..." : "Use Current"}</span>
+                                       <span className="hidden md:inline">
+                                          {isLocatingOrigin
+                                             ? "Locating..."
+                                             : "Use Current"}
+                                       </span>
                                     </button>
                                  </div>
                               </div>
@@ -1111,26 +1296,48 @@ export default function WallpaperDialog({
                                     <input
                                        type="text"
                                        value={destinationLocationInput}
-                                       onChange={(e) => handleDestinationInputChange(e.target.value)}
-                                       onFocus={() => destinationSuggestions.length > 0 && setShowDestinationSuggestions(true)}
-                                       onBlur={() => setTimeout(() => setShowDestinationSuggestions(false), 200)}
+                                       onChange={(e) =>
+                                          handleDestinationInputChange(
+                                             e.target.value,
+                                          )
+                                       }
+                                       onFocus={() =>
+                                          destinationSuggestions.length > 0 &&
+                                          setShowDestinationSuggestions(true)
+                                       }
+                                       onBlur={() =>
+                                          setTimeout(
+                                             () =>
+                                                setShowDestinationSuggestions(
+                                                   false,
+                                                ),
+                                             200,
+                                          )
+                                       }
                                        placeholder="e.g. Los Angeles, CA"
                                        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
                                     />
-                                    {showDestinationSuggestions && destinationSuggestions.length > 0 && (
-                                       <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
-                                          {destinationSuggestions.map((suggestion, index) => (
-                                             <button
-                                                key={index}
-                                                type="button"
-                                                onClick={() => selectDestinationSuggestion(suggestion)}
-                                                className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
-                                             >
-                                                {suggestion.place_name}
-                                             </button>
-                                          ))}
-                                       </div>
-                                    )}
+                                    {showDestinationSuggestions &&
+                                       destinationSuggestions.length > 0 && (
+                                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-800 border border-zinc-700 max-h-48 overflow-y-auto">
+                                             {destinationSuggestions.map(
+                                                (suggestion, index) => (
+                                                   <button
+                                                      key={index}
+                                                      type="button"
+                                                      onClick={() =>
+                                                         selectDestinationSuggestion(
+                                                            suggestion,
+                                                         )
+                                                      }
+                                                      className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                   >
+                                                      {suggestion.place_name}
+                                                   </button>
+                                                ),
+                                             )}
+                                          </div>
+                                       )}
                                  </div>
                               </div>
                               <DateSelector
@@ -1144,13 +1351,19 @@ export default function WallpaperDialog({
                               />
                               <div className="space-y-2">
                                  <FieldLabel>Zoom Level</FieldLabel>
-                                 <Select value={journeyZoom} onValueChange={setJourneyZoom}>
+                                 <Select
+                                    value={journeyZoom}
+                                    onValueChange={setJourneyZoom}
+                                 >
                                     <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
                                        <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
                                        {ZOOM_LEVELS.map((level) => (
-                                          <SelectItem key={level.value} value={level.value}>
+                                          <SelectItem
+                                             key={level.value}
+                                             value={level.value}
+                                          >
                                              {level.label}
                                           </SelectItem>
                                        ))}
@@ -1171,10 +1384,10 @@ export default function WallpaperDialog({
                               type === "location"
                                  ? "Accent Color (Your Location)"
                                  : type === "year"
-                                 ? "Accent Color (Today's Dot)"
-                                 : type === "journey"
-                                 ? "Accent Color (Markers & Status)"
-                                 : "Accent Color (Current Day)"
+                                   ? "Accent Color (Today's Dot)"
+                                   : type === "journey"
+                                     ? "Accent Color (Markers & Status)"
+                                     : "Accent Color (Current Day)"
                            }
                         />
                         {/* Preview - for location show placeholder when no location */}
@@ -1184,14 +1397,35 @@ export default function WallpaperDialog({
                               <div className="relative w-full aspect-video bg-zinc-950 overflow-hidden border border-zinc-800 flex items-center justify-center">
                                  {location && generatedUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={generatedUrl} alt="Location Wallpaper Preview" className="w-full h-full object-contain" />
+                                    <img
+                                       src={generatedUrl}
+                                       alt="Location Wallpaper Preview"
+                                       className="w-full h-full object-contain"
+                                    />
                                  ) : (
                                     <div className="text-center text-zinc-500">
-                                       <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                       <svg
+                                          className="w-12 h-12 mx-auto mb-2 opacity-50"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                       >
+                                          <path
+                                             strokeLinecap="round"
+                                             strokeLinejoin="round"
+                                             strokeWidth={1.5}
+                                             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                          />
+                                          <path
+                                             strokeLinecap="round"
+                                             strokeLinejoin="round"
+                                             strokeWidth={1.5}
+                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                          />
                                        </svg>
-                                       <p className="text-sm">Set your location to see preview</p>
+                                       <p className="text-sm">
+                                          Set your location to see preview
+                                       </p>
                                     </div>
                                  )}
                               </div>
@@ -1226,8 +1460,7 @@ export default function WallpaperDialog({
                            <p className="text-sm text-zinc-400">
                               {location
                                  ? "Your dot map is ready! Download it and set it as your wallpaper manually."
-                                 : "Set your location above to generate and download your wallpaper."
-                              }
+                                 : "Set your location above to generate and download your wallpaper."}
                            </p>
                            {location ? (
                               <a
@@ -1235,8 +1468,18 @@ export default function WallpaperDialog({
                                  download={`dotmap-${locationInput.replace(/[^a-zA-Z0-9]/g, "-") || "location"}.png`}
                                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors cursor-pointer"
                               >
-                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                 <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                 >
+                                    <path
+                                       strokeLinecap="round"
+                                       strokeLinejoin="round"
+                                       strokeWidth={2}
+                                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                    />
                                  </svg>
                                  Download Wallpaper
                               </a>
@@ -1245,17 +1488,32 @@ export default function WallpaperDialog({
                                  disabled
                                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-700 text-zinc-400 text-sm font-medium cursor-not-allowed opacity-50"
                               >
-                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                 <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                 >
+                                    <path
+                                       strokeLinecap="round"
+                                       strokeLinejoin="round"
+                                       strokeWidth={2}
+                                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                    />
                                  </svg>
                                  Download Wallpaper
                               </button>
                            )}
                            <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
-                              <p className="text-blue-400 font-medium">How to set:</p>
+                              <p className="text-blue-400 font-medium">
+                                 How to set:
+                              </p>
                               <p className="text-zinc-400 mt-1">
-                                 System Settings → Wallpaper → Add Photo → Select downloaded image → Set to{" "}
-                                 <span className="text-white">&quot;Fill Screen&quot;</span>
+                                 System Settings → Wallpaper → Add Photo →
+                                 Select downloaded image → Set to{" "}
+                                 <span className="text-white">
+                                    &quot;Fill Screen&quot;
+                                 </span>
                               </p>
                            </div>
                         </div>
