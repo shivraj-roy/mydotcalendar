@@ -59,19 +59,19 @@ export default function Home() {
                   <CalendarCard
                      title="Year"
                      description="Track your year's progress"
-                     imageSrc="/my-dot-calendar.png"
+                     imageSrc="/assets/mockups/Year Mockup.png"
                      onClick={() => setDialogOpen(true)}
                   />
                   <CalendarCard
                      title="Goal"
                      description="Track progress towards your goal"
-                     imageSrc="/goal calendar.png"
+                     imageSrc="/assets/mockups/Goal Mockup.png"
                      onClick={() => setGoalDialogOpen(true)}
                   />
                   <CalendarCard
                      title="Journey"
                      description="Track progress to your destination"
-                     imageSrc="/journey-calendar.png"
+                     imageSrc="/assets/mockups/Journey Mockup.png"
                      onClick={() => setJourneyDialogOpen(true)}
                   />
                </div>
