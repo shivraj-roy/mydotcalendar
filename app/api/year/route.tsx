@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
             // Month label - gray color, closer to dots
             const labelX = monthX + monthPaddingX;
             const labelY = monthY + labelFontSize * 1.1;
-            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="'Instrument Sans', Arial, sans-serif" font-size="${labelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
+            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif" font-size="${labelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
 
             // Days grid
             const daysInThisMonth = getDaysInMonth(startYear, m);
@@ -234,11 +234,6 @@ export async function GET(request: NextRequest) {
          const textY = height - marginBottom * 1;
 
          svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-           <defs>
-             <style>
-               @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;display=swap');
-             </style>
-           </defs>
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -246,7 +241,7 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="'Instrument Sans', Arial, sans-serif"
+             font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
              font-size="${statusFontSize}"
              font-weight="400"
            >${daysLeft}d left · ${percentComplete}%</text>
@@ -321,11 +316,6 @@ export async function GET(request: NextRequest) {
 
          // 10. Generate SVG
          svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-           <defs>
-             <style>
-               @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;display=swap');
-             </style>
-           </defs>
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -333,7 +323,7 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="'Instrument Sans', Arial, sans-serif"
+             font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
              font-size="${fontSize}"
              font-weight="400"
            >${daysLeft}d left · ${percentComplete}%</text>
