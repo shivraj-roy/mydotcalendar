@@ -346,7 +346,7 @@ export async function GET(request: NextRequest) {
       const pngData = resvg.render();
       const pngBuffer = pngData.asPng();
 
-      return new Response(pngBuffer, {
+      return new Response(Buffer.from(pngBuffer), {
          headers: {
             "Content-Type": "image/png",
             "Cache-Control": "public, max-age=3600, s-maxage=3600",
