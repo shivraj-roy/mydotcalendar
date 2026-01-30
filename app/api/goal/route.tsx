@@ -318,15 +318,23 @@ export async function GET(request: NextRequest) {
         >${statusText}</text>
       </svg>`;
 
-      // 12. Return based on format
-      if (format === "svg") {
-         return new Response(svg, {
-            headers: {
-               "Content-Type": "image/svg+xml",
-               "Cache-Control": "public, max-age=3600, s-maxage=3600",
-            },
-         });
-      }
+      // TEMPORARY DEBUG: Always return SVG to test if text renders
+      return new Response(svg, {
+         headers: {
+            "Content-Type": "image/svg+xml",
+            "Cache-Control": "public, max-age=3600, s-maxage=3600",
+         },
+      });
+
+      // // 12. Return based on format
+      // if (format === "svg") {
+      //    return new Response(svg, {
+      //       headers: {
+      //          "Content-Type": "image/svg+xml",
+      //          "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      //       },
+      //    });
+      // }
 
       // Convert SVG to PNG
       const pngBuffer = await sharp(Buffer.from(svg), { density: 150 })

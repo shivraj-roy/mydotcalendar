@@ -334,15 +334,23 @@ export async function GET(request: NextRequest) {
          </svg>`;
       }
 
-      // 11. Return based on format
-      if (format === "svg") {
-         return new Response(svg, {
-            headers: {
-               "Content-Type": "image/svg+xml",
-               "Cache-Control": "public, max-age=3600, s-maxage=3600",
-            },
-         });
-      }
+      // TEMPORARY DEBUG: Always return SVG to test if text renders
+      return new Response(svg, {
+         headers: {
+            "Content-Type": "image/svg+xml",
+            "Cache-Control": "public, max-age=3600, s-maxage=3600",
+         },
+      });
+
+      // // 11. Return based on format
+      // if (format === "svg") {
+      //    return new Response(svg, {
+      //       headers: {
+      //          "Content-Type": "image/svg+xml",
+      //          "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      //       },
+      //    });
+      // }
 
       // Convert SVG to high-quality PNG using sharp
       // Use 150 DPI for crisp Retina rendering with sharpening for defined edges
