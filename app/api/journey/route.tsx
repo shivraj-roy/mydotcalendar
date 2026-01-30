@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import sharp from "sharp";
+import path from "path";
 import { isValidHexColor } from "@/lib/calendar";
 import {
    DEFAULT_COLORS,
@@ -10,6 +11,11 @@ import {
 } from "@/lib/constants";
 import { Theme } from "@/lib/types";
 import { calculateDistance, type Coordinates } from "@/lib/map-utils";
+
+// Configure fontconfig for sharp SVG rendering
+const fontsPath = path.join(process.cwd(), "fonts");
+process.env.FONTCONFIG_PATH = fontsPath;
+process.env.FONTCONFIG_FILE = path.join(fontsPath, "fonts.conf");
 
 const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 
@@ -364,7 +370,7 @@ export async function GET(request: NextRequest) {
             fill="${accentColor}"
             font-size="${statusFontSize}"
             font-weight="500"
-            font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
+            font-family="Noto Sans, sans-serif"
          >${statusText}</text>
       `;
 

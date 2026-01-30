@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import sharp from "sharp";
+import path from "path";
 import { isValidDateFormat, isValidHexColor } from "@/lib/calendar";
 import {
    DEFAULT_COLORS,
@@ -9,6 +10,11 @@ import {
    MAX_DIMENSION,
 } from "@/lib/constants";
 import { Theme } from "@/lib/types";
+
+// Configure fontconfig for sharp SVG rendering
+const fontsPath = path.join(process.cwd(), "fonts");
+process.env.FONTCONFIG_PATH = fontsPath;
+process.env.FONTCONFIG_FILE = path.join(fontsPath, "fonts.conf");
 
 export async function GET(request: NextRequest) {
    try {
@@ -298,7 +304,7 @@ export async function GET(request: NextRequest) {
           y="${titleY}"
           text-anchor="middle"
           fill="${colors.passedDot}"
-          font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
+          font-family="Noto Sans, sans-serif"
           font-size="${titleFontSize}"
           font-weight="400"
         >${escapedGoal}</text>
@@ -308,7 +314,7 @@ export async function GET(request: NextRequest) {
           y="${textY}"
           text-anchor="middle"
           fill="${accentColor}"
-          font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
+          font-family="Noto Sans, sans-serif"
           font-size="${statusFontSize}"
           font-weight="400"
         >${statusText}</text>

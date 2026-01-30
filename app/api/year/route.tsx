@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import sharp from "sharp";
+import path from "path";
 import {
    getDayOfYear,
    getDaysInYear,
@@ -19,6 +20,11 @@ import {
    MAX_DIMENSION,
 } from "@/lib/constants";
 import { Theme } from "@/lib/types";
+
+// Configure fontconfig for sharp SVG rendering
+const fontsPath = path.join(process.cwd(), "fonts");
+process.env.FONTCONFIG_PATH = fontsPath;
+process.env.FONTCONFIG_FILE = path.join(fontsPath, "fonts.conf");
 
 export async function GET(request: NextRequest) {
    try {
@@ -190,7 +196,7 @@ export async function GET(request: NextRequest) {
             // Month label - gray color, closer to dots
             const labelX = monthX + monthPaddingX;
             const labelY = monthY + labelFontSize * 1.1;
-            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif" font-size="${labelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
+            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="Noto Sans, sans-serif" font-size="${labelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
 
             // Days grid
             const daysInThisMonth = getDaysInMonth(startYear, m);
@@ -241,7 +247,7 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
+             font-family="Noto Sans, sans-serif"
              font-size="${statusFontSize}"
              font-weight="400"
            >${daysLeft}d left · ${percentComplete}%</text>
@@ -323,7 +329,7 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="DejaVu Sans, Liberation Sans, FreeSans, Arial, sans-serif"
+             font-family="Noto Sans, sans-serif"
              font-size="${fontSize}"
              font-weight="400"
            >${daysLeft}d left · ${percentComplete}%</text>
