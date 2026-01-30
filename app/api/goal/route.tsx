@@ -292,13 +292,18 @@ export async function GET(request: NextRequest) {
 
       // 11. Generate SVG
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        <defs>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;display=swap');
+          </style>
+        </defs>
         <rect width="100%" height="100%" fill="${colors.background}"/>
         <text
           x="${width / 2}"
           y="${titleY}"
           text-anchor="middle"
           fill="${colors.passedDot}"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-family="'Instrument Sans', Arial, sans-serif"
           font-size="${titleFontSize}"
           font-weight="400"
         >${escapedGoal}</text>
@@ -308,7 +313,7 @@ export async function GET(request: NextRequest) {
           y="${textY}"
           text-anchor="middle"
           fill="${accentColor}"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-family="'Instrument Sans', Arial, sans-serif"
           font-size="${statusFontSize}"
           font-weight="400"
         >${statusText}</text>
