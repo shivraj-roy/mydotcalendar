@@ -15,7 +15,6 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { DEVICE_RESOLUTIONS } from "@/lib/constants";
 
 // ============ Types ============
@@ -66,9 +65,9 @@ const DAYS = Array.from({ length: 31 }, (_, i) => ({
 
 const DIALOG_CONFIG = {
    year: {
-      title: "Installation Steps",
+      title: "Year Calendar Steps",
       description:
-         "Start by configuring your wallpaper settings. Next, set up a daily automation. Finally, add the shortcut actions so your wallpaper updates automatically.",
+         "Track your progress through the year with a visual countdown wallpaper.",
    },
    goal: {
       title: "Goal Calendar Setup",
@@ -472,14 +471,17 @@ function ShortcutStep({
                   </p>
                   <p className="text-zinc-400 mt-1">
                      After pasting the URL above,{" "}
-                     <span className="text-orange-400 font-semibold">you must add</span>{" "}
+                     <span className="text-orange-400 font-semibold">
+                        you must add
+                     </span>{" "}
                      <code className="px-1.5 py-0.5 bg-zinc-800 text-orange-400 rounded text-xs font-mono">
                         &ts=&#91;Current Date&#93;
                      </code>{" "}
                      at the end of the URL.
                   </p>
                   <p className="text-zinc-500 mt-2 text-xs">
-                     Without this, macOS won&apos;t recognize the new wallpaper each day and automatic updates will not work.
+                     Without this, macOS won&apos;t recognize the new wallpaper
+                     each day and automatic updates will not work.
                   </p>
                </div>
 
@@ -894,10 +896,7 @@ export default function WallpaperDialog({
                </p>
             </DrawerHeader>
 
-            <ScrollArea
-               className="flex-1 overflow-y-auto px-3 md:px-4"
-               style={{ maxHeight: "calc(90vh - 160px)" }}
-            >
+            <div className="flex-1 overflow-y-auto px-3 md:px-4">
                <div className="space-y-6 py-4">
                   {/* Step 1: Define Wallpaper */}
                   <div className="space-y-4">
@@ -1170,7 +1169,7 @@ export default function WallpaperDialog({
                      onCopy={copyUrl}
                   />
                </div>
-            </ScrollArea>
+            </div>
 
             <div className="flex gap-3 p-3 md:p-4 border-t border-zinc-800 shrink-0">
                <Button

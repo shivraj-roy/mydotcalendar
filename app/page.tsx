@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactLenis } from "lenis/react";
 import { useState } from "react";
 import Image from "next/image";
 import WallpaperDialog from "@/components/WallpaperDialog";
@@ -12,9 +11,7 @@ export default function Home() {
    const [journeyDialogOpen, setJourneyDialogOpen] = useState(false);
 
    return (
-      <>
-         <ReactLenis root />
-         <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+      <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
             {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-800">
                <div className="container mx-auto px-4 py-3 relative flex items-center justify-center h-12">
@@ -112,6 +109,5 @@ export default function Home() {
                onOpenChange={setJourneyDialogOpen}
             />
          </div>
-      </>
    );
 }

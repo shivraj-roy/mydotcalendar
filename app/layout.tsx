@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -38,6 +39,7 @@ export default function RootLayout({
             className={`${instrumentSans.variable} font-[family-name:var(--font-instrument-sans)] antialiased bg-zinc-950`}
          >
             {children}
+            <Analytics />
          </body>
       </html>
    );
