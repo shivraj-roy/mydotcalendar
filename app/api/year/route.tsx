@@ -247,10 +247,9 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="Noto Sans, sans-serif"
              font-size="${statusFontSize}"
              font-weight="400"
-           >${daysLeft}d left · ${percentComplete}%</text>
+           >${daysLeft}d left - ${percentComplete}%</text>
          </svg>`;
       } else {
          // ============ YEAR LAYOUT (continuous dots) ============
@@ -329,10 +328,9 @@ export async function GET(request: NextRequest) {
              y="${textY}"
              text-anchor="middle"
              fill="${accentColor}"
-             font-family="Noto Sans, sans-serif"
              font-size="${fontSize}"
              font-weight="400"
-           >${daysLeft}d left · ${percentComplete}%</text>
+           >${daysLeft}d left - ${percentComplete}%</text>
          </svg>`;
       }
 

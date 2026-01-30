@@ -285,7 +285,7 @@ export async function GET(request: NextRequest) {
       } else if (goalCompleted) {
          statusText = `Goal completed!`;
       } else {
-         statusText = `${daysLeft}d left · ${percentComplete}%`;
+         statusText = `${daysLeft}d left - ${percentComplete}%`;
       }
 
       // Escape HTML entities in goal title
@@ -304,7 +304,6 @@ export async function GET(request: NextRequest) {
           y="${titleY}"
           text-anchor="middle"
           fill="${colors.passedDot}"
-          font-family="Noto Sans, sans-serif"
           font-size="${titleFontSize}"
           font-weight="400"
         >${escapedGoal}</text>
@@ -314,7 +313,6 @@ export async function GET(request: NextRequest) {
           y="${textY}"
           text-anchor="middle"
           fill="${accentColor}"
-          font-family="Noto Sans, sans-serif"
           font-size="${statusFontSize}"
           font-weight="400"
         >${statusText}</text>

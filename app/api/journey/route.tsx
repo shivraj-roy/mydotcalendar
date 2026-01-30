@@ -332,15 +332,18 @@ export async function GET(request: NextRequest) {
       );
 
       let statusText: string;
+      // Sanitize destination name to ASCII only
+      const sanitizedDest = destinationName.replace(/[^\x00-\x7F]/g, "");
+
       if (isArrived) {
          // On or after target date
-         statusText = `Arrived at ${destinationName}`;
+         statusText = `Arrived at ${sanitizedDest}`;
       } else {
          // Before target date
          if (daysLeft === 1) {
-            statusText = `Tomorrow · ${destinationName}`;
+            statusText = `Tomorrow - ${sanitizedDest}`;
          } else {
-            statusText = `${daysLeft}d until ${destinationName}`;
+            statusText = `${daysLeft}d until ${sanitizedDest}`;
          }
       }
 
@@ -370,7 +373,6 @@ export async function GET(request: NextRequest) {
             fill="${accentColor}"
             font-size="${statusFontSize}"
             font-weight="500"
-            font-family="Noto Sans, sans-serif"
          >${statusText}</text>
       `;
 
@@ -392,7 +394,9 @@ export async function GET(request: NextRequest) {
       }
 
       // Convert SVG to PNG
-      const pngBuffer = await sharp(Buffer.from(svg), { density: 150 })
+      const pngBuffer = await sharp(Buffer.from(svg), {
+         density: 300,
+      })
          .resize(width, height, {
             fit: "fill",
             kernel: "lanczos3",
