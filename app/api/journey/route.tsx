@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
-import { readFileSync } from "fs";
 import path from "path";
 import { isValidHexColor } from "@/lib/calendar";
 import {
@@ -16,7 +15,6 @@ import { calculateDistance, type Coordinates } from "@/lib/map-utils";
 
 // Load font file for resvg
 const fontPath = path.join(process.cwd(), "fonts", "NotoSansRegular.ttf");
-const fontData = readFileSync(fontPath);
 
 const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 

@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
-import { readFileSync } from "fs";
 import path from "path";
 import { isValidDateFormat, isValidHexColor } from "@/lib/calendar";
 import {
@@ -14,7 +13,6 @@ import { Theme } from "@/lib/types";
 
 // Load font file for resvg
 const fontPath = path.join(process.cwd(), "fonts", "NotoSansRegular.ttf");
-const fontData = readFileSync(fontPath);
 
 export async function GET(request: NextRequest) {
    try {
