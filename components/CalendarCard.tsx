@@ -5,6 +5,7 @@ interface CalendarCardProps {
    description: string;
    imageSrc: string;
    onClick: () => void;
+   priority?: boolean;
 }
 
 export default function CalendarCard({
@@ -12,6 +13,7 @@ export default function CalendarCard({
    description,
    imageSrc,
    onClick,
+   priority = false,
 }: CalendarCardProps) {
    return (
       <div
@@ -30,8 +32,9 @@ export default function CalendarCard({
                src={imageSrc}
                alt={`${title} Calendar Wallpaper Preview`}
                fill
+               sizes="(max-width: 768px) 100vw, 50vw"
                className="object-contain"
-               priority
+               priority={priority}
             />
          </div>
 

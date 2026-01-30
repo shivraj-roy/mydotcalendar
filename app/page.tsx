@@ -18,7 +18,10 @@ export default function Home() {
             {/* Fixed Header */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-800">
                <div className="container mx-auto px-4 py-3 relative flex items-center justify-center h-12">
-                  <div className="absolute left-1/2 -translate-x-1/2 group">
+                  <div className="absolute left-1/2 -translate-x-1/2 group flex items-center">
+                     <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
+                        My
+                     </span>
                      <Image
                         src="/assets/dot-logo.png"
                         alt="Logo"
@@ -26,10 +29,7 @@ export default function Home() {
                         height={46}
                         className="cursor-pointer"
                      />
-                     <span className="absolute right-full mr-0 top-1/2 -translate-y-1/2 text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
-                        My
-                     </span>
-                     <span className="absolute left-full ml-0 top-1/2 -translate-y-1/2 text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
+                     <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
                         Calendar
                      </span>
                   </div>
@@ -40,15 +40,10 @@ export default function Home() {
                {/* Hero Section */}
                <section className="text-center mt-4 md:mt-8 mb-10 md:mb-16 max-w-4xl mx-auto">
                   <h1 className="text-4xl md:text-7xl font-bold leading-[1.1]">
-                     <span className="">
-                        Minimal by design
-                        <span className="text-[#ff6347]">.</span>{" "}
-                     </span>
-                     <br />
-                     <span className="">
-                        Productive wallpapers
-                        <span className="text-[#ff6347]">.</span>{" "}
-                     </span>
+                     Minimal by design
+                     <span className="text-[#ff6347]">.</span> <br />
+                     Productive wallpapers
+                     <span className="text-[#ff6347]">.</span>{" "}
                   </h1>
                   <p className="text-lg md:text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
                      Your progress, at a glance. <br />
@@ -64,12 +59,14 @@ export default function Home() {
                         description="Track your year's progress"
                         imageSrc="/assets/mockups/Year Mockup.png"
                         onClick={() => setDialogOpen(true)}
+                        priority
                      />
                      <CalendarCard
                         title="Goal"
                         description="Track progress towards your goal"
                         imageSrc="/assets/mockups/Goal Mockup.png"
                         onClick={() => setGoalDialogOpen(true)}
+                        priority
                      />
                      <CalendarCard
                         title="Journey"
