@@ -22,10 +22,10 @@ export function getDaysInYear(year: number): 365 | 366 {
  * Calculate which day of the year a date is (1-365/366)
  */
 export function getDayOfYear(date: Date): number {
-   const start = new Date(date.getFullYear(), 0, 0);
+   const start = new Date(date.getFullYear(), 0, 1); // January 1st
    const diff = date.getTime() - start.getTime();
    const oneDay = 1000 * 60 * 60 * 24;
-   return Math.floor(diff / oneDay);
+   return Math.floor(diff / oneDay) + 1; // +1 because January 1st is day 1
 }
 
 /**
@@ -195,8 +195,8 @@ export function getDayOfYearForDate(
    day: number,
 ): number {
    const date = new Date(year, month - 1, day);
-   const start = new Date(year, 0, 0);
+   const start = new Date(year, 0, 1); // January 1st
    const diff = date.getTime() - start.getTime();
    const oneDay = 1000 * 60 * 60 * 24;
-   return Math.floor(diff / oneDay);
+   return Math.floor(diff / oneDay) + 1; // +1 because January 1st is day 1
 }
