@@ -9,10 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource/noto-sans": "^5.2.10",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
+    "@resvg/resvg-js": "^2.6.2",
     "@vercel/analytics": "^1.6.1",
     "@vercel/og": "^0.8.6",
     "class-variance-authority": "^0.7.1",

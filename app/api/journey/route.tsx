@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
+import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
+import { readFileSync } from "fs";
 import path from "path";
 import { isValidHexColor } from "@/lib/calendar";
 import {
@@ -12,10 +14,9 @@ import {
 import { Theme } from "@/lib/types";
 import { calculateDistance, type Coordinates } from "@/lib/map-utils";
 
-// Configure fontconfig for sharp SVG rendering
-const fontsPath = path.join(process.cwd(), "fonts");
-process.env.FONTCONFIG_PATH = fontsPath;
-process.env.FONTCONFIG_FILE = path.join(fontsPath, "fonts.conf");
+// Load font file for resvg
+const fontPath = path.join(process.cwd(), "fonts", "NotoSansRegular.ttf");
+const fontData = readFileSync(fontPath);
 
 const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 
@@ -373,6 +374,7 @@ export async function GET(request: NextRequest) {
             fill="${accentColor}"
             font-size="${statusFontSize}"
             font-weight="500"
+            font-family="Noto Sans"
          >${statusText}</text>
       `;
 
@@ -383,39 +385,33 @@ export async function GET(request: NextRequest) {
         ${glassPill}
       </svg>`;
 
-      // TEMPORARY DEBUG: Always return SVG to test if text renders
-      return new Response(svg, {
-         headers: {
-            "Content-Type": "image/svg+xml",
-            "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      // 16. Return based on format
+      if (format === "svg") {
+         return new Response(svg, {
+            headers: {
+               "Content-Type": "image/svg+xml",
+               "Cache-Control": "public, max-age=3600, s-maxage=3600",
+            },
+         });
+      }
+
+      // Convert SVG to PNG using resvg with embedded font
+      const resvg = new Resvg(svg, {
+         fitTo: {
+            mode: "width",
+            value: width,
+         },
+         font: {
+            fontFiles: [fontPath],
+            loadSystemFonts: false,
+            defaultFontFamily: "Noto Sans",
          },
       });
 
-      // // 16. Return based on format
-      // if (format === "svg") {
-      //    return new Response(svg, {
-      //       headers: {
-      //          "Content-Type": "image/svg+xml",
-      //          "Cache-Control": "public, max-age=3600, s-maxage=3600",
-      //       },
-      //    });
-      // }
+      const pngData = resvg.render();
+      const pngBuffer = pngData.asPng();
 
-      // Convert SVG to PNG
-      const pngBuffer = await sharp(Buffer.from(svg), {
-         density: 300,
-      })
-         .resize(width, height, {
-            fit: "fill",
-            kernel: "lanczos3",
-         })
-         .png({
-            compressionLevel: 6,
-            palette: false,
-         })
-         .toBuffer();
-
-      return new Response(new Uint8Array(pngBuffer), {
+      return new Response(pngBuffer, {
          headers: {
             "Content-Type": "image/png",
             "Cache-Control": "public, max-age=3600, s-maxage=3600",
