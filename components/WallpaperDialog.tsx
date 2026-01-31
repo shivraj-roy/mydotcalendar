@@ -36,8 +36,8 @@ const DEVICE_NAMES = Object.keys(DEVICE_RESOLUTIONS).filter(
 
 const ACCENT_COLORS = [
    { name: "Orange", value: "ff6347" },
-   { name: "Blue", value: "3b82f6" },
-   { name: "Lavender", value: "8b5cf6" },
+   { name: "Yellow", value: "fca311" },
+   { name: "Green", value: "b3efb2" },
 ];
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -1168,6 +1168,26 @@ export default function WallpaperDialog({
                      copied={copied}
                      onCopy={copyUrl}
                   />
+               </div>
+            </div>
+
+            {/* Info Note */}
+            <div className="px-3 md:px-4 py-3 bg-zinc-900/50 border-t border-zinc-800">
+               <div className="text-xs text-zinc-400 space-y-0.5 md:space-y-2">
+                  <p>
+                     Wallpapers follow{" "}
+                     <span className="text-zinc-300 font-medium">
+                        UTC time standard.
+                     </span>{" "}
+                     Updates at midnight UTC.
+                  </p>
+                  <p>
+                     Run automation manually the{" "}
+                     <span className="text-zinc-300 font-medium">
+                        first time,
+                     </span>{" "}
+                     then it updates automatically daily.
+                  </p>
                </div>
             </div>
 
