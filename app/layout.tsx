@@ -9,23 +9,87 @@ const instrumentSans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-   title: "MyDotCalendar - Your Year, One Dot at a Time",
+   title: "My Dot Calendar",
    description:
-      "Generate dynamic wallpapers that visualize your year as a grid of dots. Watch your progress through the year with a beautiful, mindful calendar wallpaper.",
+      "Track your year, goals, and journeys with beautiful minimal calendars. Generate dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Updates automatically daily.",
    keywords: [
       "wallpaper",
       "calendar",
       "year tracker",
       "productivity",
       "macbook wallpaper",
+      "dynamic wallpaper",
+      "goal tracker",
+      "journey calendar",
+      "life calendar",
+      "minimal wallpaper",
    ],
-   authors: [{ name: "MyDotCalendar" }],
-   openGraph: {
-      title: "MyDotCalendar - Your Year, One Dot at a Time",
-      description:
-         "Generate dynamic wallpapers that visualize your year as a grid of dots.",
-      type: "website",
+   authors: [{ name: "Shivraj Roy" }],
+   creator: "Shivraj Roy",
+   publisher: "Shivraj Roy",
+   metadataBase: new URL("https://mydotcalendar.vercel.app"),
+   alternates: {
+      canonical: "/",
    },
+   openGraph: {
+      title: "My Dot Calendar",
+      description:
+         "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot‑grid wallpapers that update automatically each day to visualize your progress.",
+      type: "website",
+      url: "https://mydotcalendar.vercel.app",
+      siteName: "My Dot Calendar",
+      images: [
+         {
+            url: "/assets/images/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "My Dot Calendar • Minimal wallpaper to track your year, goals, and journeys.",
+         },
+      ],
+      locale: "en_US",
+   },
+   twitter: {
+      card: "summary_large_image",
+      title: "My Dot Calendar",
+      description:
+         "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot-grid wallpapers that update automatically each day to visualize your progress.",
+      images: ["/assets/images/og-image.png"],
+   },
+   icons: {
+      icon: [
+         { url: "/assets/images/icon.png", sizes: "any" },
+         { url: "/assets/images/favicon.ico", sizes: "any" },
+      ],
+      apple: [
+         {
+            url: "/assets/images/apple-touch-icon.png",
+            sizes: "180x180",
+            type: "image/png",
+         },
+      ],
+      other: [
+         {
+            rel: "mask-icon",
+            url: "/assets/images/safari-pinned-tab.svg",
+            color: "#ff6347",
+         },
+      ],
+   },
+   manifest: "/manifest.json",
+   appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "My Dot Calendar",
+   },
+   viewport: {
+      width: "device-width",
+      initialScale: 1,
+      maximumScale: 1,
+   },
+   themeColor: [
+      { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+      { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+   ],
 };
 
 export default function RootLayout({

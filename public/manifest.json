@@ -1,0 +1,47 @@
+{
+   "name": "My Dot Calendar",
+   "short_name": "My Dot Calendar",
+   "description": "Track your year, goals, and journeys with beautiful minimal calendars. Generate dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Updates automatically daily.",
+   "start_url": "/",
+   "display": "standalone",
+   "background_color": "#1a1a1a",
+   "theme_color": "#1a1a1a",
+   "orientation": "portrait-primary",
+   "icons": [
+      {
+         "src": "/assets/images/icon.png",
+         "sizes": "512x512",
+         "type": "image/png",
+         "purpose": "any maskable"
+      },
+      {
+         "src": "/assets/images/apple-touch-icon.png",
+         "sizes": "180x180",
+         "type": "image/png"
+      }
+   ],
+   "categories": ["productivity", "utilities", "lifestyle"],
+   "shortcuts": [
+      {
+         "name": "Year Calendar",
+         "short_name": "Year",
+         "description": "Track your year's progress",
+         "url": "/?calendar=year",
+         "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+      },
+      {
+         "name": "Goal Calendar",
+         "short_name": "Goal",
+         "description": "Countdown to your goal",
+         "url": "/?calendar=goal",
+         "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+      },
+      {
+         "name": "Journey Calendar",
+         "short_name": "Journey",
+         "description": "Countdown to your journey",
+         "url": "/?calendar=journey",
+         "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+      }
+   ]
+}
