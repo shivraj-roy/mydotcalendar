@@ -28,7 +28,8 @@ interface GeocodingResult {
 async function geocodeLocation(
    query: string,
 ): Promise<{ lat: number; lng: number; name: string } | null> {
-   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&limit=1`;
+   // Limit to places, localities, and regions only (exclude street addresses)
+   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&limit=1&types=place,locality,region,country`;
 
    const response = await fetch(url);
    if (!response.ok) return null;
@@ -176,7 +177,9 @@ export async function GET(request: NextRequest) {
          );
       }
       originCoords = { lat: geocodedOrigin.lat, lng: geocodedOrigin.lng };
-      originName = geocodedOrigin.name.split(",")[0].trim(); // Get just city/place name
+      // Take first 2 parts for more specificity (e.g., "New York, NY" instead of just "New York")
+      const originParts = geocodedOrigin.name.split(",").map(s => s.trim());
+      originName = originParts.slice(0, Math.min(2, originParts.length)).join(", ");
 
       // Geocode destination location
       const geocodedDestination = await geocodeLocation(destinationParam);
@@ -192,7 +195,9 @@ export async function GET(request: NextRequest) {
          lat: geocodedDestination.lat,
          lng: geocodedDestination.lng,
       };
-      destinationName = geocodedDestination.name.split(",")[0].trim(); // Get just city/place name
+      // Take first 2 parts for more specificity (e.g., "Paris, France" instead of just "Paris")
+      const destParts = geocodedDestination.name.split(",").map(s => s.trim());
+      destinationName = destParts.slice(0, Math.min(2, destParts.length)).join(", ");
 
       // 5. Determine which location to show based on date
       const today = new Date();
@@ -331,18 +336,16 @@ export async function GET(request: NextRequest) {
       );
 
       let statusText: string;
-      // Sanitize destination name to ASCII only
-      const sanitizedDest = destinationName.replace(/[^\x00-\x7F]/g, "");
 
       if (isArrived) {
          // On or after target date
-         statusText = `Arrived at ${sanitizedDest}`;
+         statusText = `Arrived at ${destinationName}`;
       } else {
          // Before target date
          if (daysLeft === 1) {
-            statusText = `Tomorrow - ${sanitizedDest}`;
+            statusText = `Tomorrow - ${destinationName}`;
          } else {
-            statusText = `${daysLeft}d until ${sanitizedDest}`;
+            statusText = `${daysLeft}d until ${destinationName}`;
          }
       }
 
@@ -404,6 +407,10 @@ export async function GET(request: NextRequest) {
             loadSystemFonts: false,
             defaultFontFamily: "Noto Sans",
          },
+         dpi: 300, // Higher DPI for sharper rendering (default is 96)
+         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
+         imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });
 
       const pngData = resvg.render();

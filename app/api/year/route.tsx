@@ -355,6 +355,10 @@ export async function GET(request: NextRequest) {
             loadSystemFonts: false,
             defaultFontFamily: "Noto Sans",
          },
+         dpi: 300, // Higher DPI for sharper rendering (default is 96)
+         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
+         imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });
 
       const pngData = resvg.render();
