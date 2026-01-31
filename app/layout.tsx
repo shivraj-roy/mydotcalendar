@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Instrument_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
@@ -104,6 +105,19 @@ export default function RootLayout({
          <body
             className={`${instrumentSans.variable} font-[family-name:var(--font-instrument-sans)] antialiased bg-zinc-950`}
          >
+            {/* Google Analytics */}
+            <Script
+               src="https://www.googletagmanager.com/gtag/js?id=G-DBW3C7ZH6S"
+               strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+               {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-DBW3C7ZH6S');
+               `}
+            </Script>
             {children}
             <Analytics />
          </body>
