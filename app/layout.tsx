@@ -9,12 +9,14 @@ const instrumentSans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-   title: "My Dot Calendar",
+   title: "Dot Cal",
    description:
       "Track your year, goals, and journeys with beautiful minimal calendars. Generate dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Updates automatically daily.",
    keywords: [
       "wallpaper",
       "calendar",
+      "dot cal",
+      "dot calendar",
       "year tracker",
       "productivity",
       "macbook wallpaper",
@@ -32,12 +34,12 @@ export const metadata: Metadata = {
       canonical: "/",
    },
    openGraph: {
-      title: "My Dot Calendar",
+      title: "Dot Cal | Minimal wallpaper to track your year, goals, and journeys.",
       description:
          "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot‑grid wallpapers that update automatically each day to visualize your progress.",
       type: "website",
       url: "https://mydotcalendar.vercel.app",
-      siteName: "My Dot Calendar",
+      siteName: "Dot Cal",
       images: [
          {
             url: "/assets/images/og-image.png",
@@ -50,7 +52,7 @@ export const metadata: Metadata = {
    },
    twitter: {
       card: "summary_large_image",
-      title: "My Dot Calendar",
+      title: "Dot Cal | Minimal wallpaper to track your year, goals, and journeys.",
       description:
          "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot-grid wallpapers that update automatically each day to visualize your progress.",
       images: ["/assets/images/og-image.png"],
@@ -79,7 +81,7 @@ export const metadata: Metadata = {
    appleWebApp: {
       capable: true,
       statusBarStyle: "black-translucent",
-      title: "My Dot Calendar",
+      title: "Dot Cal",
    },
    viewport: {
       width: "device-width",

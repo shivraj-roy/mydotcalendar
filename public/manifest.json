@@ -1,6 +1,6 @@
 {
-   "name": "My Dot Calendar",
-   "short_name": "My Dot Calendar",
+   "name": "Dot Cal",
+   "short_name": "Dot Cal",
    "description": "Track your year, goals, and journeys with beautiful minimal calendars. Generate dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Updates automatically daily.",
    "start_url": "/",
    "display": "standalone",

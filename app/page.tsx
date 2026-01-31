@@ -46,9 +46,6 @@ export default function Home() {
          <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-800">
             <div className="container mx-auto px-4 py-3 relative flex items-center justify-center h-12">
                <div className="absolute left-1/2 -translate-x-1/2 group flex items-center">
-                  <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
-                     My
-                  </span>
                   <Image
                      src="/assets/dot-logo.png"
                      alt="Logo"
@@ -57,7 +54,9 @@ export default function Home() {
                      className="cursor-pointer"
                   />
                   <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
-                     Calendar
+                     Dot
+                     <span className="text-[#ff6347]">.</span>
+                     Cal
                   </span>
                </div>
             </div>
