@@ -29,7 +29,7 @@ export const metadata: Metadata = {
    authors: [{ name: "Shivraj Roy" }],
    creator: "Shivraj Roy",
    publisher: "Shivraj Roy",
-   metadataBase: new URL("https://mydotcalendar.vercel.app"),
+   metadataBase: new URL("https://dotcal.in"),
    alternates: {
       canonical: "/",
    },
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
       description:
          "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot‑grid wallpapers that update automatically each day to visualize your progress.",
       type: "website",
-      url: "https://mydotcalendar.vercel.app",
+      url: "https://dotcal.in",
       siteName: "Dot Cal",
       images: [
          {
