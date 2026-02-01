@@ -163,9 +163,6 @@ export async function GET(request: NextRequest) {
       const format = formatParam === "svg" ? "svg" : "png";
 
       // 4. Geocode both locations
-      let originCoords: Coordinates, destinationCoords: Coordinates;
-      let originName: string, destinationName: string;
-
       // Geocode origin location
       const geocodedOrigin = await geocodeLocation(originParam);
       if (!geocodedOrigin) {
@@ -176,10 +173,7 @@ export async function GET(request: NextRequest) {
             { status: 400, headers: { "Content-Type": "application/json" } },
          );
       }
-      originCoords = { lat: geocodedOrigin.lat, lng: geocodedOrigin.lng };
-      // Take first 2 parts for more specificity (e.g., "New York, NY" instead of just "New York")
-      const originParts = geocodedOrigin.name.split(",").map(s => s.trim());
-      originName = originParts.slice(0, Math.min(2, originParts.length)).join(", ");
+      const originCoords: Coordinates = { lat: geocodedOrigin.lat, lng: geocodedOrigin.lng };
 
       // Geocode destination location
       const geocodedDestination = await geocodeLocation(destinationParam);
@@ -191,13 +185,13 @@ export async function GET(request: NextRequest) {
             { status: 400, headers: { "Content-Type": "application/json" } },
          );
       }
-      destinationCoords = {
+      const destinationCoords: Coordinates = {
          lat: geocodedDestination.lat,
          lng: geocodedDestination.lng,
       };
       // Take first 2 parts for more specificity (e.g., "Paris, France" instead of just "Paris")
       const destParts = geocodedDestination.name.split(",").map(s => s.trim());
-      destinationName = destParts.slice(0, Math.min(2, destParts.length)).join(", ");
+      const destinationName = destParts.slice(0, Math.min(2, destParts.length)).join(", ");
 
       // 5. Determine which location to show based on date
       const today = new Date();
@@ -206,9 +200,6 @@ export async function GET(request: NextRequest) {
 
       const isArrived = today >= targetDate;
       const displayLocation = isArrived ? destinationCoords : originCoords;
-
-      // Calculate distance (not displayed, but kept for potential future use)
-      const distance = calculateDistance(originCoords, destinationCoords);
 
       // 6. Fetch satellite image centered on the display location
       const zoom = zoomParam ? parseFloat(zoomParam) : 16; // Default to Close (Streets) level
