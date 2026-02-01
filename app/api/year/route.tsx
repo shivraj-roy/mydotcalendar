@@ -237,7 +237,7 @@ export async function GET(request: NextRequest) {
          // Status text at bottom - lifted up
          const textY = height - marginBottom * 1;
 
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -246,8 +246,9 @@ export async function GET(request: NextRequest) {
              text-anchor="middle"
              fill="${accentColor}"
              font-size="${statusFontSize}"
-             font-weight="400"
+             font-weight="500"
              font-family="Noto Sans"
+             text-rendering="geometricPrecision"
            >${daysLeft}d left - ${percentComplete}%</text>
          </svg>`;
       } else {
@@ -318,8 +319,8 @@ export async function GET(request: NextRequest) {
          const fontSize = Math.max(16, Math.min(32, height * 0.025));
          const textY = offsetY + gridHeight + fontSize * 5.5;
 
-         // 10. Generate SVG
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+         // 10. Generate SVG with sharpness attributes
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -328,8 +329,9 @@ export async function GET(request: NextRequest) {
              text-anchor="middle"
              fill="${accentColor}"
              font-size="${fontSize}"
-             font-weight="400"
+             font-weight="500"
              font-family="Noto Sans"
+             text-rendering="geometricPrecision"
            >${daysLeft}d left - ${percentComplete}%</text>
          </svg>`;
       }
@@ -344,7 +346,7 @@ export async function GET(request: NextRequest) {
          });
       }
 
-      // Convert SVG to PNG using resvg with embedded font
+      // Convert SVG to PNG using resvg with embedded font - ultra sharp settings for macOS wallpaper
       const resvg = new Resvg(svg, {
          fitTo: {
             mode: "width",
@@ -355,8 +357,8 @@ export async function GET(request: NextRequest) {
             loadSystemFonts: false,
             defaultFontFamily: "Noto Sans",
          },
-         dpi: 300, // Higher DPI for sharper rendering (default is 96)
-         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         dpi: 600, // Very high DPI for maximum sharpness (default is 96, was 300)
+         shapeRendering: 1, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
          textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
          imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });

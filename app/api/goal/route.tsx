@@ -294,8 +294,8 @@ export async function GET(request: NextRequest) {
          .replace(/"/g, "&quot;")
          .replace(/'/g, "&#039;");
 
-      // 11. Generate SVG
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      // 11. Generate SVG with sharpness attributes
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
         <rect width="100%" height="100%" fill="${colors.background}"/>
         <text
           x="${width / 2}"
@@ -303,8 +303,9 @@ export async function GET(request: NextRequest) {
           text-anchor="middle"
           fill="${colors.passedDot}"
           font-size="${titleFontSize}"
-          font-weight="400"
+          font-weight="500"
           font-family="Noto Sans"
+          text-rendering="geometricPrecision"
         >${escapedGoal}</text>
         ${shapes}
         <text
@@ -313,8 +314,9 @@ export async function GET(request: NextRequest) {
           text-anchor="middle"
           fill="${accentColor}"
           font-size="${statusFontSize}"
-          font-weight="400"
+          font-weight="500"
           font-family="Noto Sans"
+          text-rendering="geometricPrecision"
         >${statusText}</text>
       </svg>`;
 
@@ -328,7 +330,7 @@ export async function GET(request: NextRequest) {
          });
       }
 
-      // Convert SVG to PNG using resvg with embedded font
+      // Convert SVG to PNG using resvg with embedded font - ultra sharp settings for macOS wallpaper
       const resvg = new Resvg(svg, {
          fitTo: {
             mode: "width",
@@ -339,8 +341,8 @@ export async function GET(request: NextRequest) {
             loadSystemFonts: false,
             defaultFontFamily: "Noto Sans",
          },
-         dpi: 300, // Higher DPI for sharper rendering (default is 96)
-         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         dpi: 600, // Very high DPI for maximum sharpness (default is 96, was 300)
+         shapeRendering: 1, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
          textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
          imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });
