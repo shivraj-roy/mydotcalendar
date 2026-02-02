@@ -233,7 +233,7 @@ function ShapeSelector({
             <IconToggleButton
                selected={value === "rounded"}
                onClick={() => onChange("rounded")}
-               icon={<span className="w-3 h-3 rounded-[4px] bg-current" />}
+               icon={<span className="w-3 h-3 rounded bg-current" />}
                label="Rounded"
             />
          </div>
@@ -544,12 +544,20 @@ function ShortcutStep({
                <p className="text-blue-400 font-medium">Important:</p>
                <p className="text-zinc-400 mt-1">
                   In System Setting&#39;s{" "}
-                  <span className="text-white">&quot;Wallpaper &quot;</span>,
-                  set to{" "}
+                  <span className="text-white">&quot;Wallpaper &quot;</span>,{" "}
+                  <span className="text-orange-400 font-semibold">
+                     make sure to
+                  </span>{" "}
+                  toggle on{" "}
+                  <span className="text-white">
+                     &quot;Show on all spaces&quot;
+                  </span>
+                  , and set to{" "}
                   <span className="text-white">&quot;Fill Screen&quot;</span>.
                </p>
                <p className="text-zinc-500 mt-2 text-xs">
-                  This helps the wallpaper not get cut off.
+                  This helps the wallpaper to update on all new spaces/windows,
+                  and does not get cut off.
                </p>
             </div>
          </div>
@@ -674,7 +682,6 @@ export default function WallpaperDialog({
       place_name: string;
       center: [number, number];
    }) {
-      const [lng, lat] = suggestion.center;
       // Store the full place name for API (better for geocoding)
       setOriginLocation(suggestion.place_name);
       // Store short name for display in input
@@ -687,7 +694,6 @@ export default function WallpaperDialog({
       place_name: string;
       center: [number, number];
    }) {
-      const [lng, lat] = suggestion.center;
       // Store the full place name for API (better for geocoding)
       setDestinationLocation(suggestion.place_name);
       // Store short name for display in input
@@ -816,17 +822,16 @@ export default function WallpaperDialog({
       return "";
    }, [targetDateYear, targetDateMonth, targetDateDay]);
 
-   // Generate URL
-   useEffect(() => {
+   // Generate URL using useMemo instead of useEffect to avoid setState in effect
+   const computedUrl = useMemo(() => {
       if (!isStep1Complete) {
-         setGeneratedUrl("");
-         return;
+         return "";
       }
 
       const baseUrl =
          typeof window !== "undefined" ? window.location.origin : "";
       const resolution = DEVICE_RESOLUTIONS[device];
-      if (!resolution) return;
+      if (!resolution) return "";
 
       const params = new URLSearchParams();
       params.append("width", resolution.width.toString());
@@ -854,7 +859,7 @@ export default function WallpaperDialog({
          goal: "/api/goal",
          journey: "/api/journey",
       };
-      setGeneratedUrl(`${baseUrl}${endpoints[type]}?${params.toString()}`);
+      return `${baseUrl}${endpoints[type]}?${params.toString()}`;
    }, [
       type,
       device,
@@ -871,6 +876,11 @@ export default function WallpaperDialog({
       journeyZoom,
       isStep1Complete,
    ]);
+
+   // Update generatedUrl when computedUrl changes
+   useEffect(() => {
+      setGeneratedUrl(computedUrl);
+   }, [computedUrl]);
 
    async function copyUrl() {
       try {
