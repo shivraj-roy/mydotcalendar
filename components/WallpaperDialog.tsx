@@ -371,40 +371,7 @@ function Preview({ url, alt }: { url: string; alt: string }) {
    );
 }
 
-function AutomationStep() {
-   return (
-      <div className="space-y-4">
-         <StepHeader step={2} title="Create Automation" />
-         <div className="ml-0 md:ml-9 space-y-2 text-sm text-zinc-400">
-            <p>
-               Open{" "}
-               <a
-                  href="shortcuts://"
-                  className="text-blue-400 underline hover:text-blue-300"
-               >
-                  Shortcuts
-               </a>{" "}
-               app ➡︎ Go to{" "}
-               <span className="text-white font-medium">Automation</span> tab ➡︎
-               New Automation ➡︎{" "}
-               <span className="text-white font-medium">Time of Day</span> ➡︎
-               6:00 AM ➡︎ Repeat{" "}
-               <span className="text-white font-medium">&quot;Daily&quot;</span>{" "}
-               ➡︎ Select{" "}
-               <span className="text-white font-medium">
-                  &quot;Run Immediately&quot;
-               </span>{" "}
-               ➡︎{" "}
-               <span className="text-orange-400 font-medium">
-                  &quot;Create New Shortcut&quot;
-               </span>
-            </p>
-         </div>
-      </div>
-   );
-}
-
-function ShortcutStep({
+function AutomationSetupStep({
    url,
    urlReady,
    copied,
@@ -417,105 +384,40 @@ function ShortcutStep({
 }) {
    return (
       <div className="space-y-4">
-         <StepHeader step={3} title="Create Shortcut" />
+         <StepHeader step={2} title="Setup Automation" />
          <div className="ml-0 md:ml-9 space-y-4">
-            <p className="text-xs text-zinc-500 uppercase tracking-wide">
-               Add these actions:
-            </p>
-
-            <div className="space-y-3">
-               <p className="text-sm">
-                  <span className="text-zinc-500">Step 1: </span>{" "}
-                  <span className="text-white font-medium">
-                     &quot;Date&quot;
-                  </span>{" "}
-                  <span className="text-zinc-400">
-                     ➡︎ Add a &quot;Date&quot; action and set it to &quot;Current
-                     Date&quot;
-                  </span>
-               </p>
-
-               <div className="space-y-2">
-                  <p className="text-sm">
-                     <span className="text-zinc-500">Step 2: </span>{" "}
-                     <span className="text-white font-medium">
-                        &quot;Get Contents of URL&quot;
-                     </span>{" "}
-                     <span className="text-zinc-400">
-                        ➡︎ paste the following URL below:
-                     </span>
-                  </p>
-                  <div className="flex gap-2">
-                     <input
-                        type="text"
-                        value={urlReady ? url : ""}
-                        placeholder={urlReady ? "" : "Complete step 1 first..."}
-                        readOnly
-                        className="flex-1 px-3 py-2 bg-zinc-800 border border-zinc-700 text-sm text-zinc-300 font-mono truncate placeholder:text-zinc-500 placeholder:font-sans"
-                     />
-                     <Button
-                        onClick={onCopy}
-                        variant="outline"
-                        size="sm"
-                        disabled={!urlReady}
-                        className="border-zinc-700 hover:bg-zinc-800 rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                     >
-                        {copied ? "Copied!" : "Copy"}
-                     </Button>
-                  </div>
+            {/* URL Section */}
+            <div className="space-y-2">
+               <FieldLabel>Your Wallpaper URL</FieldLabel>
+               <div className="flex gap-2">
+                  <input
+                     type="text"
+                     value={urlReady ? url : ""}
+                     placeholder={urlReady ? "" : "Complete step 1 first..."}
+                     readOnly
+                     className="flex-1 px-3 py-2 bg-zinc-800 border border-zinc-700 text-sm text-zinc-300 font-mono truncate placeholder:text-zinc-500 placeholder:font-sans"
+                  />
+                  <Button
+                     onClick={onCopy}
+                     variant="outline"
+                     size="sm"
+                     disabled={!urlReady}
+                     className="border-zinc-700 hover:bg-zinc-800 rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                     {copied ? "Copied!" : "Copy"}
+                  </Button>
                </div>
-
-               <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
-                  <p className="text-blue-400 font-medium">
-                     Important - You Must Add This:
-                  </p>
-                  <p className="text-zinc-400 mt-1">
-                     After pasting the URL above,{" "}
-                     <span className="text-orange-400 font-semibold">
-                        you must add
-                     </span>{" "}
-                     <code className="px-1.5 py-0.5 bg-zinc-800 text-orange-400 rounded text-xs font-mono">
-                        &ts=&#91;Current Date&#93;
-                     </code>{" "}
-                     at the end of the URL.
-                  </p>
-                  <p className="text-zinc-500 mt-2 text-xs">
-                     Without this, macOS won&apos;t recognize the new wallpaper
-                     each day and automatic updates will not work.
-                  </p>
-               </div>
-
-               <p className="text-sm">
-                  <span className="text-zinc-500">Step 3: </span>{" "}
-                  <span className="text-white font-medium">
-                     &quot;Set Wallpaper Photo&quot;
-                  </span>
-               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-               <div className="flex-1 h-px bg-zinc-700" />
-               <span className="text-xs text-zinc-500 uppercase">
-                  Or download shortcut
-               </span>
-               <div className="flex-1 h-px bg-zinc-700" />
-            </div>
-
+            {/* Download Shortcut */}
             <div className="p-3 bg-zinc-800/50 border border-zinc-700">
                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                   <p className="text-sm text-zinc-300">
-                     Don&apos;t want to create manually?{" "}
-                     <span className="hidden md:inline">
-                        Download our pre-made shortcut:
-                     </span>
-                     <span className="md:hidden">
-                        <br />
-                        Download our pre-made shortcut:
-                     </span>
+                     Download our automated shortcut for daily updates:
                   </p>
                   <a
-                     href="/assets/Set My Dot Calendar Wallpaper.shortcut"
-                     download="Set My Dot Calendar Wallpaper.shortcut"
+                     href="/assets/DotCal Wallpaper Shortcut.shortcut"
+                     download="DotCal Wallpaper Shortcut.shortcut"
                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-sm transition-colors cursor-pointer shrink-0"
                   >
                      <svg
@@ -534,30 +436,65 @@ function ShortcutStep({
                      Download Shortcut
                   </a>
                </div>
-               <p className="text-xs text-zinc-500 mt-2">
-                  After downloading, double-click to import into Shortcuts app.
-                  Then copy the URL above and paste it into the shortcut.
-               </p>
             </div>
 
+            {/* Simple Instructions */}
+            <div className="space-y-2">
+               <p className="text-xs text-zinc-500 uppercase tracking-wide">
+                  Setup Instructions:
+               </p>
+               <ol className="space-y-2 text-sm text-zinc-400 list-decimal list-inside">
+                  <li>Download the shortcut above</li>
+                  <li>Double-click to import into Shortcuts app</li>
+                  <li>
+                     Paste your wallpaper URL into the shortcut&apos;s{" "}
+                     <span className="text-white font-medium">
+                        &quot;Text&quot;
+                     </span>{" "}
+                     field
+                  </li>
+                  <li>
+                     In Shortcuts settings, enable{" "}
+                     <span className="text-white font-medium">
+                        &quot;Allow Running Scripts&quot;
+                     </span>
+                  </li>
+                  <li>
+                     Go to{" "}
+                     <span className="text-white font-medium">
+                        Automation tab
+                     </span>{" "}
+                     → New Automation →{" "}
+                     <span className="text-white font-medium">Time of Day</span>{" "}
+                     → 6:00 AM → Repeat{" "}
+                     <span className="text-white font-medium">Daily</span> →{" "}
+                     <span className="text-white font-medium">
+                        Run Immediately
+                     </span>{" "}
+                     → Select your imported shortcut
+                  </li>
+               </ol>
+            </div>
+
+            {/* Important Note */}
             <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-sm">
                <p className="text-blue-400 font-medium">Important:</p>
                <p className="text-zinc-400 mt-1">
-                  In System Setting&#39;s{" "}
-                  <span className="text-white">&quot;Wallpaper &quot;</span>,{" "}
+                  In System Settings{" "}
+                  <span className="text-white">&quot;Wallpaper&quot;</span>,{" "}
                   <span className="text-orange-400 font-semibold">
                      make sure to
                   </span>{" "}
                   toggle on{" "}
                   <span className="text-white">
-                     &quot;Show on all spaces&quot;
-                  </span>
-                  , and set to{" "}
+                     &quot;Show on all Spaces&quot;
+                  </span>{" "}
+                  and set to{" "}
                   <span className="text-white">&quot;Fill Screen&quot;</span>.
                </p>
                <p className="text-zinc-500 mt-2 text-xs">
-                  This helps the wallpaper to update on all new spaces/windows,
-                  and does not get cut off.
+                  This ensures the wallpaper updates on all spaces/windows and
+                  displays properly.
                </p>
             </div>
          </div>
@@ -1170,9 +1107,8 @@ export default function WallpaperDialog({
                      </div>
                   </div>
 
-                  {/* Step 2 & 3 - Automation and shortcut steps */}
-                  <AutomationStep />
-                  <ShortcutStep
+                  {/* Step 2 - Automation setup */}
+                  <AutomationSetupStep
                      url={generatedUrl}
                      urlReady={isStep1Complete}
                      copied={copied}
