@@ -53,7 +53,7 @@ export default function Home() {
                      height={46}
                      className="cursor-pointer"
                   />
-                  <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap">
+                  <span className="text-base font-bold tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:translate-y-1 whitespace-nowrap cursor-default">
                      Dot
                      <span className="text-[#ff6347]">.</span>
                      Cal
@@ -64,7 +64,7 @@ export default function Home() {
 
          <main className="container mx-auto px-4 pt-20 pb-8 flex-1">
             {/* Hero Section */}
-            <section className="text-center mt-4 md:mt-8 mb-10 md:mb-16 max-w-4xl mx-auto">
+            <section className="text-center mt-4 md:mt-8 mb-10 md:mb-16 max-w-4xl mx-auto cursor-default">
                <h1 className="text-4xl md:text-7xl font-bold leading-[1.1]">
                   Minimal by design
                   <span className="text-[#ff6347]">.</span> <br />
