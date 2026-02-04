@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Instrument_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { PostHogProvider } from "./providers";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -130,7 +131,8 @@ export default function RootLayout({
                `}
             </Script>
 
-            {children}
+            <PostHogProvider>{children}</PostHogProvider>
+
             <Analytics />
          </body>
       </html>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { usePostHog } from "posthog-js/react";
 import {
    Drawer,
    DrawerContent,
@@ -376,11 +377,13 @@ function AutomationSetupStep({
    urlReady,
    copied,
    onCopy,
+   onShortcutDownload,
 }: {
    url: string;
    urlReady: boolean;
    copied: boolean;
    onCopy: () => void;
+   onShortcutDownload: () => void;
 }) {
    return (
       <div className="space-y-4">
@@ -418,6 +421,7 @@ function AutomationSetupStep({
                   <a
                      href="/assets/DotCal Wallpaper Shortcut.shortcut"
                      download="DotCal Wallpaper Shortcut.shortcut"
+                     onClick={onShortcutDownload}
                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-sm transition-colors cursor-pointer shrink-0"
                   >
                      <svg
@@ -508,12 +512,14 @@ export default function WallpaperDialog({
    open,
    onOpenChange,
 }: WallpaperDialogProps) {
+   // PostHog tracking
+   const posthog = usePostHog();
+
    // Shared state
    const [device, setDevice] = useState('MacBook Pro 14" (M1-M4)');
    const [accentColor, setAccentColor] = useState("ff6347");
    const [theme, setTheme] = useState<Theme>("dark");
    const [shape, setShape] = useState<Shape>("circle");
-   const [generatedUrl, setGeneratedUrl] = useState("");
    const [copied, setCopied] = useState(false);
 
    // Year-specific state
@@ -814,19 +820,52 @@ export default function WallpaperDialog({
       isStep1Complete,
    ]);
 
-   // Update generatedUrl when computedUrl changes
+   // Track when dialog opens
    useEffect(() => {
-      setGeneratedUrl(computedUrl);
-   }, [computedUrl]);
+      if (open) {
+         posthog?.capture("wallpaper_dialog_opened", {
+            calendar_type: type,
+         });
+      }
+   }, [open, type, posthog]);
+
+   // Track when URL is generated
+   useEffect(() => {
+      if (computedUrl && isStep1Complete) {
+         posthog?.capture("wallpaper_url_generated", {
+            calendar_type: type,
+            device: device,
+            theme: theme,
+            shape: shape,
+            accent_color: accentColor,
+            layout: type === "year" ? layout : undefined,
+         });
+      }
+   }, [computedUrl, isStep1Complete, type, device, theme, shape, accentColor, layout, posthog]);
 
    async function copyUrl() {
       try {
-         await navigator.clipboard.writeText(generatedUrl);
+         await navigator.clipboard.writeText(computedUrl);
          setCopied(true);
          setTimeout(() => setCopied(false), 2000);
+
+         // Track URL copy
+         posthog?.capture("wallpaper_url_copied", {
+            calendar_type: type,
+            device: device,
+            theme: theme,
+         });
       } catch (err) {
          console.error("Failed to copy:", err);
       }
+   }
+
+   function handleShortcutDownload() {
+      // Track shortcut download
+      posthog?.capture("shortcut_downloaded", {
+         calendar_type: type,
+         device: device,
+      });
    }
 
    const config = DIALOG_CONFIG[type];
@@ -1101,7 +1140,7 @@ export default function WallpaperDialog({
                            }
                         />
                         <Preview
-                           url={generatedUrl}
+                           url={computedUrl}
                            alt={`${type === "year" ? "Year" : type === "goal" ? "Goal" : "Journey"} Wallpaper Preview`}
                         />
                      </div>
@@ -1109,10 +1148,11 @@ export default function WallpaperDialog({
 
                   {/* Step 2 - Automation setup */}
                   <AutomationSetupStep
-                     url={generatedUrl}
+                     url={computedUrl}
                      urlReady={isStep1Complete}
                      copied={copied}
                      onCopy={copyUrl}
+                     onShortcutDownload={handleShortcutDownload}
                   />
                </div>
             </div>

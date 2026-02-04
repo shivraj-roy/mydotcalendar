@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
+import { PostHog } from "posthog-node";
 import path from "path";
 import {
    getDayOfYear,
@@ -115,7 +116,34 @@ export async function GET(request: NextRequest) {
       type Layout = "year" | "month";
       const layout: Layout = layoutParam === "month" ? "month" : "year";
 
-      // 4. Calculate calendar data
+      // 4. Track with PostHog
+      const posthog = new PostHog(
+         process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
+         {
+            host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+         }
+      );
+
+      // Capture wallpaper generation event
+      posthog.capture({
+         distinctId: request.headers.get("x-forwarded-for") || "anonymous",
+         event: "wallpaper_generated_api",
+         properties: {
+            calendar_type: "year",
+            width: width,
+            height: height,
+            theme: theme,
+            shape: shape,
+            accent: accent,
+            layout: layout,
+            format: format,
+            user_agent: request.headers.get("user-agent"),
+         },
+      });
+
+      await posthog.shutdown();
+
+      // 5. Calculate calendar data
       const today = new Date();
       const dayOfYear = getDayOfYear(today);
       const startYear = new Date(startDate).getFullYear();
@@ -123,7 +151,7 @@ export async function GET(request: NextRequest) {
       const daysLeft = daysInYear - dayOfYear;
       const percentComplete = Math.round((dayOfYear / daysInYear) * 100);
 
-      // 5. Get theme colors
+      // 6. Get theme colors
       const colors = DEFAULT_COLORS[theme];
       const accentColor = `#${accent}`;
 

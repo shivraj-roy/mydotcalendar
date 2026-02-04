@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
+import { PostHog } from "posthog-node";
 import sharp from "sharp";
 import path from "path";
 import { isValidHexColor } from "@/lib/calendar";
@@ -193,7 +194,35 @@ export async function GET(request: NextRequest) {
       const destParts = geocodedDestination.name.split(",").map(s => s.trim());
       const destinationName = destParts.slice(0, Math.min(2, destParts.length)).join(", ");
 
-      // 5. Determine which location to show based on date
+      // 5. Track with PostHog
+      const posthog = new PostHog(
+         process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
+         {
+            host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+         }
+      );
+
+      posthog.capture({
+         distinctId: request.headers.get("x-forwarded-for") || "anonymous",
+         event: "wallpaper_generated_api",
+         properties: {
+            calendar_type: "journey",
+            width: width,
+            height: height,
+            theme: theme,
+            shape: shape,
+            accent: accent,
+            zoom: zoomParam || "16",
+            format: format,
+            origin_location: originParam,
+            destination_location: destinationParam,
+            user_agent: request.headers.get("user-agent"),
+         },
+      });
+
+      await posthog.shutdown();
+
+      // 6. Determine which location to show based on date
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Normalize to start of day
       targetDate.setHours(0, 0, 0, 0);
