@@ -829,20 +829,6 @@ export default function WallpaperDialog({
       }
    }, [open, type, posthog]);
 
-   // Track when URL is generated
-   useEffect(() => {
-      if (computedUrl && isStep1Complete) {
-         posthog?.capture("wallpaper_url_generated", {
-            calendar_type: type,
-            device: device,
-            theme: theme,
-            shape: shape,
-            accent_color: accentColor,
-            layout: type === "year" ? layout : undefined,
-         });
-      }
-   }, [computedUrl, isStep1Complete, type, device, theme, shape, accentColor, layout, posthog]);
-
    async function copyUrl() {
       try {
          await navigator.clipboard.writeText(computedUrl);
