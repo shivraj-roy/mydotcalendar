@@ -1,36 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="./public/assets/dot-logo.png" alt="Dot Cal Logo" width="120">
 
-## Getting Started
+# Dot Cal
 
-First, run the development server:
+**Track your year, goals, and journeys with beautiful minimal calendars**
+
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-38bdf8?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+
+[**Live at dotcal.in →**](https://dotcal.in)
+
+</div>
+
+---
+
+## ✨ What is Dot Cal?
+
+Dot Cal generates dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Each day updates automatically with a new wallpaper showing your progress.
+
+<div align="center">
+
+### Year Calendar
+
+  <img src="./public/assets/mockups/Year Mockup.png" alt="Year Calendar" width="700">
+
+_365 dots representing every day of the year. Watch your year unfold dot by dot._
+
+---
+
+### Goal Tracker
+
+  <img src="./public/assets/mockups/Goal Mockup.png" alt="Goal Calendar" width="700">
+
+_Countdown to your important goals. Each dot marks a day toward achievement._
+
+---
+
+### Journey Calendar
+
+  <img src="./public/assets/mockups/Journey Mockup.png" alt="Journey Calendar" width="700">
+
+_Track trips with satellite map views. Visualize your journey from start to destination._
+
+</div>
+
+---
+
+## 🚀 Features
+
+- **🎨 Three Calendar Types** - Year tracker, goal countdown, and journey maps
+- **🌍 Live Satellite Imagery** - Powered by Mapbox for journey calendars
+- **⚡ Auto-Updates** - Wallpapers refresh daily via macOS Shortcuts automation
+- **🎯 Customizable** - Pick colors, set goals, choose dates
+- **📱 Responsive** - Works on desktop and mobile browsers
+- **🌙 Dark Mode** - Minimal dark design aesthetic
+- **⏰ UTC Timezone** - Consistent updates at midnight UTC
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Next.js 16](https://nextjs.org/) with App Router & Server Actions
+- **Language:** [TypeScript 5](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **UI Components:** [Radix UI](https://www.radix-ui.com/) + [Vaul](https://vaul.emilkowal.ski/)
+- **SVG → PNG:** [@resvg/resvg-js](https://github.com/yisibl/resvg-js) with embedded fonts
+- **Maps:** [Mapbox Static Images API](https://docs.mapbox.com/api/maps/static-images/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Analytics:** Vercel Analytics, Google Analytics 4, Microsoft Clarity, PostHog
+- **Deployment:** [Vercel](https://vercel.com/)
+
+---
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js 20+ and npm/pnpm/yarn/bun
+- Mapbox API token (for journey calendars)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/shivraj-roy/mydotcalendar.git
+cd mydotcalendar
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Add your MAPBOX_ACCESS_TOKEN to .env.local
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🖼️ Automated Wallpaper Setup (macOS)
 
-## Learn More
+Download the included [**Shortcuts file**](./public/assets/DotCal%20Wallpaper%20Shortcut.shortcut) to automatically update your wallpaper daily.
 
-To learn more about Next.js, take a look at the following resources:
+### Setup Instructions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Download the shortcut from the website or repository
+2. Import it into macOS Shortcuts app
+3. Run it **once manually** to set initial wallpaper
+4. Enable "Show on all spaces" in System Settings → Wallpaper
+5. Set up daily automation in Shortcuts (runs at midnight)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Note:** Due to macOS limitations, "Show on all spaces" may toggle off after automation runs. [Reported to Apple Developer Forums](https://developer.apple.com/forums/).
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧑‍💻 Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Run development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
+
+# Lint code
+npm run lint
+```
+
+### Project Structure
+
+```
+mydotcalendar/
+├── app/
+│   ├── api/
+│   │   ├── year/          # Year calendar API endpoint
+│   │   ├── goal/          # Goal calendar API endpoint
+│   │   └── journey/       # Journey calendar API endpoint
+│   ├── layout.tsx         # Root layout with metadata
+│   ├── page.tsx           # Home page
+│   ├── robots.ts          # SEO robots configuration
+│   └── sitemap.ts         # Dynamic sitemap
+├── components/
+│   ├── CalendarCard.tsx   # Calendar preview cards
+│   └── WallpaperDialog.tsx # Wallpaper generation dialog
+├── lib/
+│   └── calendar.ts        # Date calculation utilities
+├── fonts/
+│   └── NotoSansRegular.ttf # Bundled font for SVG rendering
+└── public/
+    └── assets/            # Images, icons, mockups
+```
+
+- Inspired by The Life Calendar concepts
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [Shivraj Roy](https://github.com/shivraj-roy)**
+
+[Website](https://dotcal.in) • [Report Bug](https://github.com/shivraj-roy/mydotcalendar/issues) • [Request Feature](https://github.com/shivraj-roy/mydotcalendar/issues)
+
+⭐ Star this repo if you find it helpful!
+
+</div>
