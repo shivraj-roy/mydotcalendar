@@ -31,16 +31,16 @@ export const metadata: Metadata = {
    authors: [{ name: "Shivraj Roy" }],
    creator: "Shivraj Roy",
    publisher: "Shivraj Roy",
-   metadataBase: new URL("https://dotcal.in"),
+   metadataBase: new URL("https://www.dotcal.in"),
    alternates: {
       canonical: "/",
    },
    openGraph: {
-      title: "Dot Cal | Minimal wallpaper to track your year, goals, and journeys.",
+      title: "Dot Cal | Track your year, goals, and journeys.",
       description:
-         "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot‑grid wallpapers that update automatically each day to visualize your progress.",
+         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot‑grid wallpapers that auto-updates daily to visualize your progress.",
       type: "website",
-      url: "https://dotcal.in",
+      url: "https://www.dotcal.in",
       siteName: "Dot Cal",
       images: [
          {
@@ -54,9 +54,9 @@ export const metadata: Metadata = {
    },
    twitter: {
       card: "summary_large_image",
-      title: "Dot Cal | Minimal wallpaper to track your year, goals, and journeys.",
+      title: "Dot Cal | Track your year, goals, and journeys.",
       description:
-         "Track your year, goals, and journeys with beautiful minimal calendars. Create dynamic dot-grid wallpapers that update automatically each day to visualize your progress.",
+         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot-grid wallpapers that auto-update daily to visualize your progress.",
       images: ["/assets/images/og-image.png"],
    },
    icons: {
