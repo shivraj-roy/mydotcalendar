@@ -38,7 +38,7 @@ export const metadata: Metadata = {
    openGraph: {
       title: "Dot Cal | Track your year, goals, and journeys.",
       description:
-         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot‑grid wallpapers that auto-updates daily to visualize your progress.",
+         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot‑grid wallpapers that auto-update daily to visualize your progress.",
       type: "website",
       url: "https://www.dotcal.in",
       siteName: "Dot Cal",
