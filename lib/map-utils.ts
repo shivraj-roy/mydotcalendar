@@ -12,7 +12,10 @@ export interface Coordinates {
  * Calculate the great-circle distance between two coordinates using Haversine formula
  * Returns distance in kilometers
  */
-export function calculateDistance(coord1: Coordinates, coord2: Coordinates): number {
+export function calculateDistance(
+   coord1: Coordinates,
+   coord2: Coordinates,
+): number {
    const R = 6371; // Earth's radius in kilometers
 
    const lat1Rad = (coord1.lat * Math.PI) / 180;
@@ -22,8 +25,10 @@ export function calculateDistance(coord1: Coordinates, coord2: Coordinates): num
 
    const a =
       Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-      Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-      Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+      Math.cos(lat1Rad) *
+         Math.cos(lat2Rad) *
+         Math.sin(deltaLng / 2) *
+         Math.sin(deltaLng / 2);
 
    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -33,7 +38,10 @@ export function calculateDistance(coord1: Coordinates, coord2: Coordinates): num
 /**
  * Calculate the center point between two coordinates
  */
-export function calculateCenterPoint(coord1: Coordinates, coord2: Coordinates): Coordinates {
+export function calculateCenterPoint(
+   coord1: Coordinates,
+   coord2: Coordinates,
+): Coordinates {
    // Simple average for nearby points
    // For points that are far apart, this is good enough for our use case
    return {
@@ -57,7 +65,7 @@ export function calculateOptimalZoom(
    coord1: Coordinates,
    coord2: Coordinates,
    width: number,
-   height: number
+   height: number,
 ): number {
    const distance = calculateDistance(coord1, coord2);
 
@@ -103,7 +111,7 @@ export function coordinatesToPixels(
    mapCenter: Coordinates,
    zoom: number,
    width: number,
-   height: number
+   height: number,
 ): { x: number; y: number } {
    // Mapbox uses 256px tiles, and at zoom level z, the world is 256 * 2^z pixels
    const scale = 256 * Math.pow(2, zoom);
@@ -111,7 +119,7 @@ export function coordinatesToPixels(
    // Helper function to convert latitude to Mercator Y coordinate
    function latToMercatorY(lat: number): number {
       const latRad = (lat * Math.PI) / 180;
-      return Math.log(Math.tan((Math.PI / 4) + (latRad / 2)));
+      return Math.log(Math.tan(Math.PI / 4 + latRad / 2));
    }
 
    // Convert longitudes to world pixel coordinates
@@ -122,16 +130,16 @@ export function coordinatesToPixels(
    const pointMercY = latToMercatorY(coord.lat);
    const centerMercY = latToMercatorY(mapCenter.lat);
 
-   const pointWorldY = (scale / 2) - (pointMercY * scale / (2 * Math.PI));
-   const centerWorldY = (scale / 2) - (centerMercY * scale / (2 * Math.PI));
+   const pointWorldY = scale / 2 - (pointMercY * scale) / (2 * Math.PI);
+   const centerWorldY = scale / 2 - (centerMercY * scale) / (2 * Math.PI);
 
    // Calculate pixel offset from center
    const offsetX = pointWorldX - centerWorldX;
    const offsetY = pointWorldY - centerWorldY;
 
    // Add offset to center of image
-   const pixelX = (width / 2) + offsetX;
-   const pixelY = (height / 2) + offsetY;
+   const pixelX = width / 2 + offsetX;
+   const pixelY = height / 2 + offsetY;
 
    return { x: pixelX, y: pixelY };
 }
@@ -140,7 +148,11 @@ export function coordinatesToPixels(
  * Calculate bounding box that includes both coordinates with padding
  * Returns min/max lat/lng
  */
-export function calculateBounds(coord1: Coordinates, coord2: Coordinates, paddingPercent: number = 0.1) {
+export function calculateBounds(
+   coord1: Coordinates,
+   coord2: Coordinates,
+   paddingPercent: number = 0.1,
+) {
    const minLat = Math.min(coord1.lat, coord2.lat);
    const maxLat = Math.max(coord1.lat, coord2.lat);
    const minLng = Math.min(coord1.lng, coord2.lng);

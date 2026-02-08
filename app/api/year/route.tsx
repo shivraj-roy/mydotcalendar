@@ -117,12 +117,10 @@ export async function GET(request: NextRequest) {
       const layout: Layout = layoutParam === "month" ? "month" : "year";
 
       // 4. Track with PostHog
-      const posthog = new PostHog(
-         process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
-         {
-            host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-         }
-      );
+      const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
+         host:
+            process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+      });
 
       // Capture wallpaper generation event
       posthog.capture({
