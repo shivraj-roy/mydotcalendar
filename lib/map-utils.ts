@@ -64,8 +64,6 @@ export function calculateCenterPoint(
 export function calculateOptimalZoom(
    coord1: Coordinates,
    coord2: Coordinates,
-   width: number,
-   height: number,
 ): number {
    const distance = calculateDistance(coord1, coord2);
 

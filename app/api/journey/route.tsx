@@ -12,7 +12,7 @@ import {
    MAX_DIMENSION,
 } from "@/lib/constants";
 import { Theme } from "@/lib/types";
-import { calculateDistance, type Coordinates } from "@/lib/map-utils";
+import { type Coordinates } from "@/lib/map-utils";
 
 // Load font file for resvg
 const fontPath = path.join(process.cwd(), "fonts", "NotoSansRegular.ttf");
