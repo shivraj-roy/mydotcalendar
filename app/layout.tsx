@@ -44,7 +44,7 @@ export const metadata: Metadata = {
       siteName: "Dot Cal",
       images: [
          {
-            url: "/assets/images/og-image.png",
+            url: "/assets/images/og-banner.png",
             width: 1200,
             height: 630,
             alt: "My Dot Calendar • Minimal wallpaper to track your year, goals, and journeys.",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
       title: "Dot Cal | Track your year, goals, and journeys.",
       description:
          "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot-grid wallpapers that auto-update daily to visualize your progress.",
-      images: ["/assets/images/og-image.png"],
+      images: ["/assets/images/og-banner.png"],
    },
    icons: {
       icon: [
