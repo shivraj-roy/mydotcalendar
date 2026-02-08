@@ -10,6 +10,7 @@
 ## 💡 Core Concept
 
 Unlike traditional calendars that show weeks or months, MyDotCalendar shows **every single day of the year** as a visual dot:
+
 - **White/Light dots** = Days that have passed (already lived)
 - **Dark gray dots** = Days remaining in the year
 - **Orange/Accent dot** = Today (current day)
@@ -18,6 +19,7 @@ Unlike traditional calendars that show weeks or months, MyDotCalendar shows **ev
 ## 🔧 How It Works
 
 ### User Flow:
+
 1. User visits `mydotcalendar.com`
 2. User selects their device (MacBook model, or custom resolution)
 3. User optionally customizes:
@@ -36,16 +38,18 @@ Unlike traditional calendars that show weeks or months, MyDotCalendar shows **ev
    - The percentage increases
 
 ### Technical Flow:
+
 ```
-User Request → Next.js API Route → Calculate Current Day → 
-Generate 365/366 Dots → Apply Colors Based on Date → 
-Render Image using @vercel/og → Return PNG → 
+User Request → Next.js API Route → Calculate Current Day →
+Generate 365/366 Dots → Apply Colors Based on Date →
+Render Image using @vercel/og → Return PNG →
 Device Displays as Wallpaper
 ```
 
 ## 🏗️ Technical Architecture
 
 ### Stack:
+
 - **Framework**: Next.js 14+ (App Router)
 - **Image Generation**: `@vercel/og` (Vercel's Edge Image Generation)
 - **Deployment**: Vercel (Edge Functions)
@@ -53,6 +57,7 @@ Device Displays as Wallpaper
 - **Styling**: Tailwind CSS (for landing page)
 
 ### Why @vercel/og?
+
 - Built specifically for Vercel Edge Functions
 - Uses Satori (JSX to SVG) - declarative, easy to style with Flexbox/CSS
 - Perfect for dynamic image generation
@@ -61,6 +66,7 @@ Device Displays as Wallpaper
 - Lighter and faster than node-canvas
 
 ### Project Structure:
+
 ```
 mydotcalendar/
 ├─ app/
@@ -88,6 +94,7 @@ mydotcalendar/
 ## 📐 Calendar Logic (Year Layout - 365/366 Dots Only)
 
 ### Grid Layout Calculation:
+
 ```
 Total dots: 365 (or 366 for leap years)
 Grid arrangement: Auto-calculate rows/columns to fit screen aspect ratio
@@ -106,11 +113,13 @@ Algorithm:
 ```
 
 ### Dot States:
+
 1. **Passed days** (white/light): Days before today
 2. **Current day** (orange/accent): Today
 3. **Future days** (dark gray): Days after today
 
 ### Date Calculations:
+
 ```typescript
 // Core logic
 const startDate = new Date(start_date); // e.g., "2026-01-01"
@@ -124,7 +133,9 @@ const percentComplete = Math.round((dayOfYear / daysInYear) * 100);
 ## 🎨 Design Specifications
 
 ### Visual Reference:
+
 The design should match the uploaded screenshot exactly:
+
 - Dark background
 - Clean grid of circles
 - Passed days in white
@@ -133,6 +144,7 @@ The design should match the uploaded screenshot exactly:
 - Bottom text showing "XXXd left · X%" in orange
 
 ### Colors (Dark Theme - Default):
+
 ```css
 Background: #1a1a1a (dark gray/black)
 Passed dots: #ffffff (white)
@@ -142,6 +154,7 @@ Text: #ff6347 (matches current dot color)
 ```
 
 ### Light Theme (Future):
+
 ```css
 Background: #ffffff (white)
 Passed dots: #1a1a1a (dark)
@@ -151,35 +164,37 @@ Text: #ff6347
 ```
 
 ### Sizing & Spacing:
+
 - **Dot diameter**: Auto-calculated based on screen size (responsive)
-  - Formula: `min((width - marginX) / cols, (height - marginY - textHeight) / rows) * 0.7`
-  - The 0.7 factor leaves space between dots
+   - Formula: `min((width - marginX) / cols, (height - marginY - textHeight) / rows) * 0.7`
+   - The 0.7 factor leaves space between dots
 - **Dot spacing**: 8-12px between dots (adjust for screen density)
 - **Text size**: 24-32px (readable from distance)
 - **Text position**: Bottom center, 40-60px from bottom edge
 - **Margins**: 40-60px from screen edges
 
 ### Device Resolutions (Phase 1 - MacBook Focus):
+
 ```typescript
 const DEVICE_RESOLUTIONS = {
-  // MacBook (Primary Focus - Phase 1)
-  'MacBook Air 13" (M2/M3)': { width: 2560, height: 1664 },
-  'MacBook Air 15" (M2/M3)': { width: 2880, height: 1864 },
-  'MacBook Pro 14" (M1-M4)': { width: 3024, height: 1964 },
-  'MacBook Pro 16" (M1-M4)': { width: 3456, height: 2234 },
-  'MacBook Pro 13" (2020)': { width: 2560, height: 1600 },
-  
-  // Future: Windows Desktop (Phase 2)
-  // '1080p Display': { width: 1920, height: 1080 },
-  // '1440p Display': { width: 2560, height: 1440 },
-  // '4K Display': { width: 3840, height: 2160 },
-  
-  // Future: Mobile (Phase 3)
-  // 'iPhone 15 Pro': { width: 1179, height: 2556 },
-  // 'iPhone 15 Pro Max': { width: 1290, height: 2796 },
-  // 'Pixel 8 Pro': { width: 1344, height: 2992 },
-  
-  'Custom': { width: 0, height: 0 }, // User input
+   // MacBook (Primary Focus - Phase 1)
+   'MacBook Air 13" (M2/M3)': { width: 2560, height: 1664 },
+   'MacBook Air 15" (M2/M3)': { width: 2880, height: 1864 },
+   'MacBook Pro 14" (M1-M4)': { width: 3024, height: 1964 },
+   'MacBook Pro 16" (M1-M4)': { width: 3456, height: 2234 },
+   'MacBook Pro 13" (2020)': { width: 2560, height: 1600 },
+
+   // Future: Windows Desktop (Phase 2)
+   // '1080p Display': { width: 1920, height: 1080 },
+   // '1440p Display': { width: 2560, height: 1440 },
+   // '4K Display': { width: 3840, height: 2160 },
+
+   // Future: Mobile (Phase 3)
+   // 'iPhone 15 Pro': { width: 1179, height: 2556 },
+   // 'iPhone 15 Pro Max': { width: 1290, height: 2796 },
+   // 'Pixel 8 Pro': { width: 1344, height: 2992 },
+
+   Custom: { width: 0, height: 0 }, // User input
 };
 ```
 
@@ -198,12 +213,14 @@ const DEVICE_RESOLUTIONS = {
 | `accent` | string | ❌ No | `ff6347` | Hex color without # (e.g., "3b82f6") |
 | `theme` | string | ❌ No | `dark` | Either "dark" or "light" |
 
-**Response**: 
+**Response**:
+
 - Content-Type: `image/png`
 - Binary PNG image data
 - Cache headers for performance
 
 **Example URLs**:
+
 ```
 # Basic (minimal params)
 https://api.mydotcalendar.com/year?width=2560&height=1664
@@ -219,18 +236,25 @@ https://api.mydotcalendar.com/year?width=2560&height=1664&theme=light
 ```
 
 **Error Responses**:
+
 ```typescript
 // Missing required params
-{ error: "Missing required parameters: width, height" }
-Status: 400
+{
+   error: "Missing required parameters: width, height";
+}
+Status: 400;
 
 // Invalid date format
-{ error: "Invalid start_date format. Use YYYY-MM-DD" }
-Status: 400
+{
+   error: "Invalid start_date format. Use YYYY-MM-DD";
+}
+Status: 400;
 
 // Invalid dimensions
-{ error: "Width and height must be positive numbers" }
-Status: 400
+{
+   error: "Width and height must be positive numbers";
+}
+Status: 400;
 ```
 
 ## 🧮 Implementation Details
@@ -240,6 +264,7 @@ Status: 400
 This is the core API endpoint that generates the wallpaper image.
 
 **Key responsibilities**:
+
 - Parse and validate URL parameters
 - Calculate current day of year
 - Determine which dots should be which color
@@ -248,6 +273,7 @@ This is the core API endpoint that generates the wallpaper image.
 - Return PNG with proper caching headers
 
 **Pseudocode**:
+
 ```typescript
 export async function GET(request: Request) {
   // 1. Parse URL parameters
@@ -257,27 +283,27 @@ export async function GET(request: Request) {
   const start_date = searchParams.get('start_date') || getCurrentYearStart();
   const accent = searchParams.get('accent') || 'ff6347';
   const theme = searchParams.get('theme') || 'dark';
-  
+
   // 2. Validate parameters
   if (!width || !height) {
     return new Response(JSON.stringify({ error: 'Missing width or height' }), {
       status: 400,
     });
   }
-  
+
   // 3. Calculate calendar data
   const today = new Date();
   const dayOfYear = getDayOfYear(today);
   const daysInYear = isLeapYear(today.getFullYear()) ? 366 : 365;
   const daysLeft = daysInYear - dayOfYear;
   const percentComplete = Math.round((dayOfYear / daysInYear) * 100);
-  
+
   // 4. Calculate grid dimensions
   const { rows, cols } = calculateGridDimensions(daysInYear, width / height);
-  
+
   // 5. Calculate dot size and spacing
   const dotSize = calculateDotSize(width, height, rows, cols);
-  
+
   // 6. Generate dots array with colors
   const dots = Array.from({ length: daysInYear }, (_, i) => {
     const dotNumber = i + 1;
@@ -291,7 +317,7 @@ export async function GET(request: Request) {
     }
     return { number: dotNumber, color };
   });
-  
+
   // 7. Render using ImageResponse
   return new ImageResponse(
     (
@@ -324,7 +350,7 @@ export async function GET(request: Request) {
             />
           ))}
         </div>
-        
+
         {/* Bottom text */}
         <div style={{
           position: 'absolute',
@@ -346,6 +372,7 @@ export async function GET(request: Request) {
 ```
 
 **Important notes for @vercel/og**:
+
 - Use inline styles (no external CSS)
 - Supports Flexbox layout
 - Limited CSS properties (check Satori docs)
@@ -363,42 +390,42 @@ Pure functions for all date mathematics and calculations.
  * Check if a year is a leap year
  */
 export function isLeapYear(year: number): boolean {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
 /**
  * Get total days in a specific year
  */
 export function getDaysInYear(year: number): 365 | 366 {
-  return isLeapYear(year) ? 366 : 365;
+   return isLeapYear(year) ? 366 : 365;
 }
 
 /**
  * Calculate which day of the year a date is (1-365/366)
  */
 export function getDayOfYear(date: Date): number {
-  const start = new Date(date.getFullYear(), 0, 0);
-  const diff = date.getTime() - start.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  return Math.floor(diff / oneDay);
+   const start = new Date(date.getFullYear(), 0, 0);
+   const diff = date.getTime() - start.getTime();
+   const oneDay = 1000 * 60 * 60 * 24;
+   return Math.floor(diff / oneDay);
 }
 
 /**
  * Calculate days remaining in the year
  */
 export function getDaysRemaining(date: Date): number {
-  const dayOfYear = getDayOfYear(date);
-  const daysInYear = getDaysInYear(date.getFullYear());
-  return daysInYear - dayOfYear;
+   const dayOfYear = getDayOfYear(date);
+   const daysInYear = getDaysInYear(date.getFullYear());
+   return daysInYear - dayOfYear;
 }
 
 /**
  * Calculate percentage of year complete
  */
 export function getPercentComplete(date: Date): number {
-  const dayOfYear = getDayOfYear(date);
-  const daysInYear = getDaysInYear(date.getFullYear());
-  return Math.round((dayOfYear / daysInYear) * 100);
+   const dayOfYear = getDayOfYear(date);
+   const daysInYear = getDaysInYear(date.getFullYear());
+   return Math.round((dayOfYear / daysInYear) * 100);
 }
 
 /**
@@ -408,73 +435,73 @@ export function getPercentComplete(date: Date): number {
  * @returns Object with rows and cols
  */
 export function calculateGridDimensions(
-  totalDots: number,
-  aspectRatio: number
+   totalDots: number,
+   aspectRatio: number,
 ): { rows: number; cols: number } {
-  // Find factors of totalDots or close to it
-  // Optimize for aspect ratio match
-  
-  // Start with square root as baseline
-  const sqrt = Math.sqrt(totalDots);
-  let bestRows = Math.round(sqrt);
-  let bestCols = Math.ceil(totalDots / bestRows);
-  
-  // Try different combinations to match aspect ratio
-  for (let rows = Math.floor(sqrt) - 5; rows <= Math.ceil(sqrt) + 5; rows++) {
-    const cols = Math.ceil(totalDots / rows);
-    const currentAspectRatio = cols / rows;
-    const bestAspectRatio = bestCols / bestRows;
-    
-    // Check if this combination is closer to target aspect ratio
-    if (
-      Math.abs(currentAspectRatio - aspectRatio) <
-      Math.abs(bestAspectRatio - aspectRatio)
-    ) {
-      bestRows = rows;
-      bestCols = cols;
-    }
-  }
-  
-  return { rows: bestRows, cols: bestCols };
+   // Find factors of totalDots or close to it
+   // Optimize for aspect ratio match
+
+   // Start with square root as baseline
+   const sqrt = Math.sqrt(totalDots);
+   let bestRows = Math.round(sqrt);
+   let bestCols = Math.ceil(totalDots / bestRows);
+
+   // Try different combinations to match aspect ratio
+   for (let rows = Math.floor(sqrt) - 5; rows <= Math.ceil(sqrt) + 5; rows++) {
+      const cols = Math.ceil(totalDots / rows);
+      const currentAspectRatio = cols / rows;
+      const bestAspectRatio = bestCols / bestRows;
+
+      // Check if this combination is closer to target aspect ratio
+      if (
+         Math.abs(currentAspectRatio - aspectRatio) <
+         Math.abs(bestAspectRatio - aspectRatio)
+      ) {
+         bestRows = rows;
+         bestCols = cols;
+      }
+   }
+
+   return { rows: bestRows, cols: bestCols };
 }
 
 /**
  * Calculate dot size based on screen dimensions
  */
 export function calculateDotSize(
-  width: number,
-  height: number,
-  rows: number,
-  cols: number,
-  margin: number = 60
+   width: number,
+   height: number,
+   rows: number,
+   cols: number,
+   margin: number = 60,
 ): number {
-  const availableWidth = width - margin * 2;
-  const availableHeight = height - margin * 2 - 100; // Reserve space for text
-  
-  const dotWidthSize = availableWidth / cols;
-  const dotHeightSize = availableHeight / rows;
-  
-  // Use smaller of the two, with 0.7 factor for spacing
-  return Math.floor(Math.min(dotWidthSize, dotHeightSize) * 0.7);
+   const availableWidth = width - margin * 2;
+   const availableHeight = height - margin * 2 - 100; // Reserve space for text
+
+   const dotWidthSize = availableWidth / cols;
+   const dotHeightSize = availableHeight / rows;
+
+   // Use smaller of the two, with 0.7 factor for spacing
+   return Math.floor(Math.min(dotWidthSize, dotHeightSize) * 0.7);
 }
 
 /**
  * Validate date string format (YYYY-MM-DD)
  */
 export function isValidDateFormat(dateString: string): boolean {
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!regex.test(dateString)) return false;
-  
-  const date = new Date(dateString);
-  return date instanceof Date && !isNaN(date.getTime());
+   const regex = /^\d{4}-\d{2}-\d{2}$/;
+   if (!regex.test(dateString)) return false;
+
+   const date = new Date(dateString);
+   return date instanceof Date && !isNaN(date.getTime());
 }
 
 /**
  * Get start of current year (YYYY-01-01)
  */
 export function getCurrentYearStart(): string {
-  const year = new Date().getFullYear();
-  return `${year}-01-01`;
+   const year = new Date().getFullYear();
+   return `${year}-01-01`;
 }
 ```
 
@@ -484,34 +511,34 @@ All configuration constants in one place.
 
 ```typescript
 export const DEVICE_RESOLUTIONS = {
-  // MacBook Models (Phase 1)
-  'MacBook Air 13" (M2/M3)': { width: 2560, height: 1664 },
-  'MacBook Air 15" (M2/M3)': { width: 2880, height: 1864 },
-  'MacBook Pro 14" (M1-M4)': { width: 3024, height: 1964 },
-  'MacBook Pro 16" (M1-M4)': { width: 3456, height: 2234 },
-  'MacBook Pro 13" (2020)': { width: 2560, height: 1600 },
-  'Custom': { width: 0, height: 0 },
+   // MacBook Models (Phase 1)
+   'MacBook Air 13" (M2/M3)': { width: 2560, height: 1664 },
+   'MacBook Air 15" (M2/M3)': { width: 2880, height: 1864 },
+   'MacBook Pro 14" (M1-M4)': { width: 3024, height: 1964 },
+   'MacBook Pro 16" (M1-M4)': { width: 3456, height: 2234 },
+   'MacBook Pro 13" (2020)': { width: 2560, height: 1600 },
+   Custom: { width: 0, height: 0 },
 } as const;
 
 export const DEFAULT_COLORS = {
-  dark: {
-    background: '#1a1a1a',
-    passedDot: '#ffffff',
-    currentDot: '#ff6347',
-    futureDot: '#3a3a3a',
-    text: '#ff6347',
-  },
-  light: {
-    background: '#ffffff',
-    passedDot: '#1a1a1a',
-    currentDot: '#ff6347',
-    futureDot: '#e5e5e5',
-    text: '#ff6347',
-  },
+   dark: {
+      background: "#1a1a1a",
+      passedDot: "#ffffff",
+      currentDot: "#ff6347",
+      futureDot: "#3a3a3a",
+      text: "#ff6347",
+   },
+   light: {
+      background: "#ffffff",
+      passedDot: "#1a1a1a",
+      currentDot: "#ff6347",
+      futureDot: "#e5e5e5",
+      text: "#ff6347",
+   },
 } as const;
 
-export const DEFAULT_ACCENT = 'ff6347'; // Tomato/coral orange
-export const DEFAULT_THEME = 'dark';
+export const DEFAULT_ACCENT = "ff6347"; // Tomato/coral orange
+export const DEFAULT_THEME = "dark";
 export const DEFAULT_MARGIN = 60;
 export const DEFAULT_TEXT_SIZE = 28;
 export const DEFAULT_DOT_SPACING_FACTOR = 0.7;
@@ -523,36 +550,36 @@ TypeScript interfaces and types.
 
 ```typescript
 export interface WallpaperParams {
-  width: number;
-  height: number;
-  start_date?: string;
-  accent?: string;
-  theme?: 'dark' | 'light';
+   width: number;
+   height: number;
+   start_date?: string;
+   accent?: string;
+   theme?: "dark" | "light";
 }
 
 export interface CalendarData {
-  dayOfYear: number;
-  daysInYear: number;
-  daysLeft: number;
-  percentComplete: number;
+   dayOfYear: number;
+   daysInYear: number;
+   daysLeft: number;
+   percentComplete: number;
 }
 
 export interface GridDimensions {
-  rows: number;
-  cols: number;
+   rows: number;
+   cols: number;
 }
 
 export interface DotData {
-  number: number;
-  color: string;
+   number: number;
+   color: string;
 }
 
 export interface DeviceResolution {
-  width: number;
-  height: number;
+   width: number;
+   height: number;
 }
 
-export type Theme = 'dark' | 'light';
+export type Theme = "dark" | "light";
 export type DeviceType = keyof typeof DEVICE_RESOLUTIONS;
 ```
 
@@ -561,6 +588,7 @@ export type DeviceType = keyof typeof DEVICE_RESOLUTIONS;
 Interactive UI for generating wallpaper URLs.
 
 **Features needed**:
+
 - Device selector dropdown (MacBook models)
 - Custom resolution inputs (for custom option)
 - Date picker for start_date (optional)
@@ -571,17 +599,18 @@ Interactive UI for generating wallpaper URLs.
 - Instructions for setting wallpaper
 
 **Component structure**:
+
 ```tsx
 export default function HomePage() {
-  return (
-    <main>
-      <Hero />
-      <WallpaperGenerator />
-      <Instructions />
-      <FAQ />
-      <Footer />
-    </main>
-  );
+   return (
+      <main>
+         <Hero />
+         <WallpaperGenerator />
+         <Instructions />
+         <FAQ />
+         <Footer />
+      </main>
+   );
 }
 ```
 
@@ -590,34 +619,36 @@ export default function HomePage() {
 Main interactive form component.
 
 **State management**:
+
 ```typescript
 const [device, setDevice] = useState('MacBook Pro 14" (M1-M4)');
 const [customWidth, setCustomWidth] = useState(3024);
 const [customHeight, setCustomHeight] = useState(1964);
 const [startDate, setStartDate] = useState(getCurrentYearStart());
-const [accentColor, setAccentColor] = useState('ff6347');
-const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-const [generatedUrl, setGeneratedUrl] = useState('');
+const [accentColor, setAccentColor] = useState("ff6347");
+const [theme, setTheme] = useState<"dark" | "light">("dark");
+const [generatedUrl, setGeneratedUrl] = useState("");
 ```
 
 **URL generation logic**:
+
 ```typescript
 function generateUrl() {
-  const params = new URLSearchParams();
-  params.append('width', customWidth.toString());
-  params.append('height', customHeight.toString());
-  if (startDate !== getCurrentYearStart()) {
-    params.append('start_date', startDate);
-  }
-  if (accentColor !== 'ff6347') {
-    params.append('accent', accentColor);
-  }
-  if (theme !== 'dark') {
-    params.append('theme', theme);
-  }
-  
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/year?${params.toString()}`;
-  setGeneratedUrl(url);
+   const params = new URLSearchParams();
+   params.append("width", customWidth.toString());
+   params.append("height", customHeight.toString());
+   if (startDate !== getCurrentYearStart()) {
+      params.append("start_date", startDate);
+   }
+   if (accentColor !== "ff6347") {
+      params.append("accent", accentColor);
+   }
+   if (theme !== "dark") {
+      params.append("theme", theme);
+   }
+
+   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/year?${params.toString()}`;
+   setGeneratedUrl(url);
 }
 ```
 
@@ -653,6 +684,7 @@ http://localhost:3000/api/year?width=2560&height=1664&accent=10b981
 ### Edge Cases to Test:
 
 **Date edge cases**:
+
 - [ ] Leap year (Feb 29, 366 days total)
 - [ ] Year transitions (Dec 31 → Jan 1)
 - [ ] First day of year (Jan 1)
@@ -662,6 +694,7 @@ http://localhost:3000/api/year?width=2560&height=1664&accent=10b981
 - [ ] Past start dates
 
 **Parameter validation**:
+
 - [ ] Missing width parameter
 - [ ] Missing height parameter
 - [ ] Zero or negative dimensions
@@ -671,6 +704,7 @@ http://localhost:3000/api/year?width=2560&height=1664&accent=10b981
 - [ ] Invalid theme value (not dark/light)
 
 **Visual quality**:
+
 - [ ] All MacBook resolutions render correctly
 - [ ] Dots are perfectly circular
 - [ ] Spacing is consistent
@@ -679,6 +713,7 @@ http://localhost:3000/api/year?width=2560&height=1664&accent=10b981
 - [ ] Grid layout is balanced
 
 **Performance**:
+
 - [ ] Image generation time < 500ms
 - [ ] Handles concurrent requests
 - [ ] Proper caching headers
@@ -701,6 +736,7 @@ open test.png
 ### Phase 1: MVP - Core API (Week 1)
 
 **Days 1-2: Project Setup**
+
 - [ ] Initialize Next.js 14+ with TypeScript
 - [ ] Install dependencies (`@vercel/og`, Tailwind CSS)
 - [ ] Set up project structure (folders, files)
@@ -708,12 +744,14 @@ open test.png
 - [ ] Set up Git repository
 
 **Days 3-4: Core Logic**
+
 - [ ] Implement all calendar calculation functions
 - [ ] Write unit tests for date math
 - [ ] Implement grid dimension calculator
 - [ ] Test with 365 and 366 day scenarios
 
 **Days 5-6: API Route**
+
 - [ ] Build `/api/year/route.tsx`
 - [ ] Implement parameter parsing and validation
 - [ ] Integrate calendar calculations
@@ -722,6 +760,7 @@ open test.png
 - [ ] Add error handling
 
 **Day 7: Testing & Refinement**
+
 - [ ] Test all MacBook resolutions
 - [ ] Verify dot sizing and spacing
 - [ ] Match design exactly to reference image
@@ -731,6 +770,7 @@ open test.png
 ### Phase 2: Landing Page (Week 2)
 
 **Days 1-3: UI Components**
+
 - [ ] Build Hero section
 - [ ] Build WallpaperGenerator component
 - [ ] Build DeviceSelector component
@@ -739,6 +779,7 @@ open test.png
 - [ ] Add theme toggle
 
 **Days 4-5: Features & Polish**
+
 - [ ] URL generation logic
 - [ ] Copy to clipboard functionality
 - [ ] Download image button
@@ -746,6 +787,7 @@ open test.png
 - [ ] Responsive design (mobile-friendly)
 
 **Days 6-7: Content & Documentation**
+
 - [ ] Write instructions section
 - [ ] Create FAQ section
 - [ ] Add footer with links
@@ -755,6 +797,7 @@ open test.png
 ### Phase 3: Production Deployment (Week 3)
 
 **Days 1-2: Preparation**
+
 - [ ] Environment variables setup
 - [ ] Performance optimization
 - [ ] Add caching strategies
@@ -762,6 +805,7 @@ open test.png
 - [ ] Accessibility audit
 
 **Days 3-4: Deployment**
+
 - [ ] Deploy to Vercel
 - [ ] Configure custom domain (mydotcalendar.com)
 - [ ] Set up SSL/HTTPS
@@ -769,6 +813,7 @@ open test.png
 - [ ] Monitor edge function performance
 
 **Days 5-7: Launch & Monitoring**
+
 - [ ] Soft launch to friends/beta testers
 - [ ] Collect feedback
 - [ ] Fix any issues
@@ -778,6 +823,7 @@ open test.png
 ### Phase 4: Future Enhancements (Post-Launch)
 
 **Future layouts (not in Phase 1)**:
+
 - [ ] Weekly view (52 weeks)
 - [ ] Monthly view (12 months)
 - [ ] Life calendar (entire life in weeks/years)
@@ -785,12 +831,14 @@ open test.png
 - [ ] Habit tracking integration
 
 **Platform expansion**:
+
 - [ ] Windows desktop support (Phase 2)
 - [ ] Mobile wallpaper support - iOS (Phase 3)
 - [ ] Mobile wallpaper support - Android (Phase 3)
 - [ ] Tablet support
 
 **Additional features**:
+
 - [ ] Save/share configurations
 - [ ] User accounts (optional)
 - [ ] Multiple calendars per user
@@ -802,12 +850,14 @@ open test.png
 ## 📊 Success Criteria
 
 **Performance**:
+
 - [ ] Image generation < 500ms
 - [ ] 99.9% uptime on Vercel Edge
 - [ ] Lighthouse score > 90
 - [ ] Fast First Contentful Paint (< 1s)
 
 **Quality**:
+
 - [ ] Pixel-perfect dot rendering
 - [ ] Accurate date calculations (zero errors)
 - [ ] Perfect color matching to spec
@@ -815,6 +865,7 @@ open test.png
 - [ ] Clean, maintainable code
 
 **User Experience**:
+
 - [ ] Intuitive landing page
 - [ ] One-click URL copy
 - [ ] Clear instructions
@@ -828,12 +879,14 @@ open test.png
 **Tagline**: "Your year, one dot at a time"
 
 **Alternative taglines**:
+
 - "365 dots. One year. Make it count."
 - "Visualize your time, one day at a time"
 - "Every dot is a day. Make them matter."
 - "See your year. Live your days."
 
 **Logo ideas** (for future):
+
 - Simple grid of dots with one highlighted
 - Minimalist calendar icon with dots
 - Single glowing dot
@@ -843,21 +896,23 @@ open test.png
 ### For @vercel/og ImageResponse:
 
 1. **All styles must be inline**:
+
    ```tsx
    // ✅ Correct
    <div style={{ backgroundColor: '#1a1a1a', display: 'flex' }}>
-   
+
    // ❌ Wrong
    <div className="bg-gray-900 flex">
    ```
 
 2. **Use camelCase for CSS properties**:
+
    ```tsx
    // ✅ Correct
-   backgroundColor, flexDirection, fontSize
-   
+   (backgroundColor, flexDirection, fontSize);
+
    // ❌ Wrong
-   background-color, flex-direction, font-size
+   (background - color, flex - direction, font - size);
    ```
 
 3. **Limited CSS support** - mainly Flexbox:
@@ -870,6 +925,7 @@ open test.png
    - Check Satori docs for full list
 
 4. **Absolute positioning works**:
+
    ```tsx
    <div style={{ position: 'absolute', bottom: '60px' }}>
    ```
@@ -882,6 +938,7 @@ open test.png
 ### Date Calculation Notes:
 
 1. **Always use UTC or handle timezones carefully**:
+
    ```typescript
    // Be consistent with timezone handling
    const today = new Date();
@@ -901,11 +958,13 @@ open test.png
 ## 🔐 Environment Variables
 
 ### Development (`.env.local`):
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 ### Production (Vercel):
+
 ```env
 NEXT_PUBLIC_API_URL=https://mydotcalendar.com
 ```
@@ -914,27 +973,28 @@ NEXT_PUBLIC_API_URL=https://mydotcalendar.com
 
 ```json
 {
-  "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@vercel/og": "^0.6.2"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "typescript": "^5.3.0",
-    "tailwindcss": "^3.4.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
-  }
+   "dependencies": {
+      "next": "^14.2.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "@vercel/og": "^0.6.2"
+   },
+   "devDependencies": {
+      "@types/node": "^20.0.0",
+      "@types/react": "^18.2.0",
+      "@types/react-dom": "^18.2.0",
+      "typescript": "^5.3.0",
+      "tailwindcss": "^3.4.0",
+      "autoprefixer": "^10.4.0",
+      "postcss": "^8.4.0"
+   }
 }
 ```
 
 ## 🎯 Priority Focus
 
 **What to build FIRST (Phase 1 MVP)**:
+
 1. ✅ Calendar calculation functions (`/lib/calendar.ts`)
 2. ✅ API route with ImageResponse (`/app/api/year/route.tsx`)
 3. ✅ Test with all MacBook resolutions
@@ -942,6 +1002,7 @@ NEXT_PUBLIC_API_URL=https://mydotcalendar.com
 5. ✅ Basic landing page with URL generator
 
 **What to build LATER**:
+
 - ❌ Other layouts (weeks, months, life) - NOT in Phase 1
 - ❌ Windows/Mobile support - Phase 2+
 - ❌ User accounts, saving configs - Future
@@ -952,13 +1013,15 @@ NEXT_PUBLIC_API_URL=https://mydotcalendar.com
 **Inspiration**: thelifecalendar.com (similar concept for mobile)
 
 **Key differences from thelifecalendar.com**:
+
 - They focus on mobile (iPhone wallpapers)
 - We focus on desktop (MacBook first, then Windows)
 - They have multiple layouts (we start with year/daily only)
 - They use different tech stack (we use Next.js + @vercel/og)
 
-**Design reference**: 
+**Design reference**:
 The uploaded screenshot shows the exact visual style we need to match:
+
 - Dark background (#1a1a1a)
 - White dots for passed days
 - Orange dot for today
@@ -968,6 +1031,7 @@ The uploaded screenshot shows the exact visual style we need to match:
 ## ✅ Definition of Done
 
 A task is complete when:
+
 - [ ] Code is written and follows TypeScript best practices
 - [ ] Function has JSDoc comments
 - [ ] Edge cases are handled
@@ -984,6 +1048,7 @@ A task is complete when:
 **For Claude Code**:
 
 1. **Initialize the project**:
+
    ```bash
    npx create-next-app@latest mydotcalendar --typescript --tailwind --app
    cd mydotcalendar

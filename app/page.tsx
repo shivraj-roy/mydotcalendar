@@ -9,7 +9,6 @@ export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [goalDialogOpen, setGoalDialogOpen] = useState(false);
    const [journeyDialogOpen, setJourneyDialogOpen] = useState(false);
-   const [showTooltip, setShowTooltip] = useState(false);
 
    const tooltipMessages = [
       "Like it!",
@@ -38,7 +37,7 @@ export default function Home() {
          setMessageIndex((prev) => (prev + 1) % tooltipMessages.length);
       }, 8000);
       return () => clearInterval(interval);
-   }, [tooltipVisible]);
+   }, [tooltipVisible, tooltipMessages.length]);
 
    return (
       <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
@@ -160,8 +159,6 @@ export default function Home() {
                rel="noopener noreferrer"
                className="block bg-[#27272A] hover:bg-[#404040] transition-all duration-300 rounded-full p-3 shadow-lg hover:shadow-xl hover:scale-110"
                aria-label="Buy me a coffee"
-               onMouseEnter={() => setShowTooltip(true)}
-               onMouseLeave={() => setShowTooltip(false)}
             >
                <Image
                   src="/BMC.svg"

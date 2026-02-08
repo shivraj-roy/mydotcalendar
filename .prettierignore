@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+build/
+*.min.js
+package-lock.json
+fonts/
+public/assets/
+.vercel/

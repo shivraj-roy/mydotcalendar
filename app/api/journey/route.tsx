@@ -12,7 +12,7 @@ import {
    MAX_DIMENSION,
 } from "@/lib/constants";
 import { Theme } from "@/lib/types";
-import { calculateDistance, type Coordinates } from "@/lib/map-utils";
+import { type Coordinates } from "@/lib/map-utils";
 
 // Load font file for resvg
 const fontPath = path.join(process.cwd(), "fonts", "NotoSansRegular.ttf");
@@ -174,7 +174,10 @@ export async function GET(request: NextRequest) {
             { status: 400, headers: { "Content-Type": "application/json" } },
          );
       }
-      const originCoords: Coordinates = { lat: geocodedOrigin.lat, lng: geocodedOrigin.lng };
+      const originCoords: Coordinates = {
+         lat: geocodedOrigin.lat,
+         lng: geocodedOrigin.lng,
+      };
 
       // Geocode destination location
       const geocodedDestination = await geocodeLocation(destinationParam);
@@ -191,16 +194,18 @@ export async function GET(request: NextRequest) {
          lng: geocodedDestination.lng,
       };
       // Take first 2 parts for more specificity (e.g., "Paris, France" instead of just "Paris")
-      const destParts = geocodedDestination.name.split(",").map(s => s.trim());
-      const destinationName = destParts.slice(0, Math.min(2, destParts.length)).join(", ");
+      const destParts = geocodedDestination.name
+         .split(",")
+         .map((s) => s.trim());
+      const destinationName = destParts
+         .slice(0, Math.min(2, destParts.length))
+         .join(", ");
 
       // 5. Track with PostHog
-      const posthog = new PostHog(
-         process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
-         {
-            host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-         }
-      );
+      const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
+         host:
+            process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+      });
 
       posthog.capture({
          distinctId: request.headers.get("x-forwarded-for") || "anonymous",
@@ -371,7 +376,10 @@ export async function GET(request: NextRequest) {
 
       // Calculate pill dimensions based on text length
       const statusFontSize = Math.max(18, Math.min(24, width / 60)); // Larger font size
-      const pillWidth = Math.max(280, statusText.length * statusFontSize * 0.65);
+      const pillWidth = Math.max(
+         280,
+         statusText.length * statusFontSize * 0.65,
+      );
       const pillHeight = 70; // Increased from 50 to 70
       const pillX = width / 2 - pillWidth / 2;
       const pillY = height - 240; // Adjusted for larger pill
