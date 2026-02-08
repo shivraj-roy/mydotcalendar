@@ -159,7 +159,9 @@ mydotcalendar/
     └── assets/            # Images, icons, mockups
 ```
 
-- Inspired by The Life Calendar concepts
+## License
+
+This project is licensed under **Apache 2.0 with Commons Clause** license. See the [LICENSE](./LICENSE) file for details.
 
 ---
 

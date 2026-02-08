@@ -2,6 +2,7 @@
   "name": "mydotcalendar",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0 WITH Commons-Clause-1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
