@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { Github, Star } from "lucide-react";
 import WallpaperDialog from "@/components/WallpaperDialog";
 import CalendarCard from "@/components/CalendarCard";
 
@@ -104,8 +105,8 @@ export default function Home() {
          </main>
 
          {/* Footer */}
-         <footer className="border-t border-zinc-800 py-8">
-            <div className="container mx-auto px-4 text-center text-zinc-500 text-sm">
+         <footer className="border-t border-zinc-800 py-5">
+            <div className="container mx-auto px-4 flex items-center justify-center gap-3 text-zinc-500 text-sm">
                <p>
                   Made by{" "}
                   <a
@@ -117,6 +118,20 @@ export default function Home() {
                      @shivraj_roy10
                   </a>
                </p>
+               <span className="text-[#ff6347] text-lg">.</span>
+               <a
+                  href="https://github.com/shivraj-roy/mydotcalendar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative group text-zinc-400 hover:text-white transition-colors"
+                  aria-label="Star on GitHub"
+               >
+                  <Github size={18} />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-zinc-800 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-1">
+                     <Star size={12} />
+                     Star on GitHub..!
+                  </span>
+               </a>
             </div>
          </footer>
 
