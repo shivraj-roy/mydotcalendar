@@ -72,8 +72,8 @@ export default function Home() {
                   <span className="text-[#ff6347]">.</span>{" "}
                </h1>
                <p className="text-lg md:text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
-                  Your progress, at a glance. <br />
-                  Auto-updated on your screen.
+                  Auto-updating macOS wallpapers that turn <br />
+                  your desktop into a progress tracker.
                </p>
             </section>
 
