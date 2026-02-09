@@ -12,6 +12,8 @@
 
 [**Live at dotcal.in →**](https://dotcal.in)
 
+[![CI](https://github.com/shivraj-roy/mydotcalendar/actions/workflows/ci.yml/badge.svg)](https://github.com/shivraj-roy/mydotcalendar/actions/workflows/ci.yml)
+
 </div>
 
 ---
@@ -167,10 +169,6 @@ This project is licensed under **Apache 2.0 with Commons Clause** license. See t
 
 <div align="center">
 
-**Made with ❤️ by [Shivraj Roy](https://github.com/shivraj-roy)**
-
-[Website](https://dotcal.in) • [Report Bug](https://github.com/shivraj-roy/mydotcalendar/issues) • [Request Feature](https://github.com/shivraj-roy/mydotcalendar/issues)
-
-⭐ Star this repo if you find it helpful!
+**⭐ Star this repo if you find it helpful!**
 
 </div>
