@@ -290,6 +290,10 @@ function LayoutSelector({
             </SelectTrigger>
             <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
                <SelectItem value="year">Days (all days of the year)</SelectItem>
+               <SelectItem value="week">
+                  Weeks (52 weeks of the year)
+               </SelectItem>
+               <SelectItem value="weeks">Weeks (GitHub-style grid)</SelectItem>
                <SelectItem value="month">Months (calendar grid)</SelectItem>
             </SelectContent>
          </Select>

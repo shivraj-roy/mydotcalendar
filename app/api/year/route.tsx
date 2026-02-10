@@ -112,9 +112,14 @@ export async function GET(request: NextRequest) {
       // Format: png (default) or svg
       const format = formatParam === "svg" ? "svg" : "png";
 
-      // Layout: year (default continuous) or month (grouped by month)
-      type Layout = "year" | "month";
-      const layout: Layout = layoutParam === "month" ? "month" : "year";
+      // Layout: year (default continuous), month (grouped by month), weeks (GitHub-style), or week (52 dots)
+      type Layout = "year" | "month" | "weeks" | "week";
+      const layout: Layout =
+         layoutParam === "month" ||
+         layoutParam === "weeks" ||
+         layoutParam === "week"
+            ? layoutParam
+            : "year";
 
       // 4. Track with PostHog
       const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
@@ -276,6 +281,199 @@ export async function GET(request: NextRequest) {
              font-family="Noto Sans"
              text-rendering="geometricPrecision"
            >${daysLeft}d left - ${percentComplete}%</text>
+         </svg>`;
+      } else if (layout === "weeks") {
+         // ============ WEEKS LAYOUT (52-53 columns × 7 rows) ============
+         // Each column is a week, each row is a day of the week (Mon-Sun)
+         const jan1 = new Date(startYear, 0, 1);
+         const jan1Day = jan1.getDay(); // 0=Sun, 6=Sat
+         // Shift so Monday=0
+         const jan1Offset = (jan1Day + 6) % 7;
+
+         // Total weeks needed to cover the year
+         const totalWeeks = Math.ceil((daysInYear + jan1Offset) / 7);
+         const weekRows = 7;
+
+         // Calculate sizing
+         const marginX = width * 0.08;
+         const marginTop = height * 0.1;
+         const marginBottom = height * 0.2;
+
+         const availableWidth = width - marginX * 2;
+         const availableHeight = height - marginTop - marginBottom;
+
+         const cellWidth = availableWidth / totalWeeks;
+         const cellHeight = availableHeight / weekRows;
+         const cellSize = Math.min(cellWidth, cellHeight);
+
+         const dotDiameter = cellSize * 0.7;
+         const dotRadius = dotDiameter / 2;
+         const gap = cellSize * 0.15;
+         const cornerRadius = dotDiameter * 0.2;
+
+         const gridWidth = totalWeeks * dotDiameter + (totalWeeks - 1) * gap;
+         const gridHeight = weekRows * dotDiameter + (weekRows - 1) * gap;
+
+         const offsetX = (width - gridWidth) / 2;
+         const offsetY = marginTop + (availableHeight - gridHeight) / 2;
+
+         let shapes = "";
+
+         // Day labels on the left (Mon, Wed, Fri)
+         const labelFontSize = Math.max(10, Math.min(20, dotDiameter * 1.1));
+         const dayLabels = ["Mon", "", "Wed", "", "Fri", "", ""];
+         for (let r = 0; r < weekRows; r++) {
+            if (!dayLabels[r]) continue;
+            const y =
+               offsetY +
+               r * (dotDiameter + gap) +
+               dotRadius +
+               labelFontSize / 3;
+            shapes += `<text x="${offsetX - labelFontSize * 0.6}" y="${y}" text-anchor="end" fill="${colors.futureDot}" font-family="Noto Sans, sans-serif" font-size="${labelFontSize}" font-weight="400">${dayLabels[r]}</text>`;
+         }
+
+         // Generate dots: iterate over each week and day
+         for (let week = 0; week < totalWeeks; week++) {
+            for (let dayRow = 0; dayRow < weekRows; dayRow++) {
+               const dayIndex = week * 7 + dayRow - jan1Offset;
+               if (dayIndex < 0 || dayIndex >= daysInYear) continue;
+
+               const dayNum = dayIndex + 1;
+
+               const x = offsetX + week * (dotDiameter + gap);
+               const y = offsetY + dayRow * (dotDiameter + gap);
+               const cx = x + dotRadius;
+               const cy = y + dotRadius;
+
+               let color: string;
+               if (dayNum < dayOfYear) {
+                  color = colors.passedDot;
+               } else if (dayNum === dayOfYear) {
+                  color = accentColor;
+               } else {
+                  color = colors.futureDot;
+               }
+
+               if (shape === "circle") {
+                  shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+               } else if (shape === "square") {
+                  shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
+               } else if (shape === "rounded") {
+                  shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+               }
+            }
+         }
+
+         // Month labels along the top
+         const monthLabelFontSize = Math.max(
+            12,
+            Math.min(22, dotDiameter * 1.1),
+         );
+         for (let m = 1; m <= 12; m++) {
+            const firstDayOfMonth = getDayOfYearForDate(startYear, m, 1) - 1;
+            const weekIndex = Math.floor((firstDayOfMonth + jan1Offset) / 7);
+            const labelX = offsetX + weekIndex * (dotDiameter + gap);
+            const labelY = offsetY - monthLabelFontSize * 0.8;
+            shapes += `<text x="${labelX}" y="${labelY}" fill="${colors.futureDot}" font-family="Noto Sans, sans-serif" font-size="${monthLabelFontSize}" font-weight="400">${getMonthName(m)}</text>`;
+         }
+
+         // Status text with week count
+         const currentWeek = Math.ceil(dayOfYear / 7);
+         const fontSize = Math.max(16, Math.min(32, height * 0.025));
+         const textY = offsetY + gridHeight + fontSize * 5.5;
+
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+           <rect width="100%" height="100%" fill="${colors.background}"/>
+           ${shapes}
+           <text
+             x="${width / 2}"
+             y="${textY}"
+             text-anchor="middle"
+             fill="${accentColor}"
+             font-size="${fontSize}"
+             font-weight="500"
+             font-family="Noto Sans"
+             text-rendering="geometricPrecision"
+           >Week ${currentWeek} of ${totalWeeks} - ${percentComplete}%</text>
+         </svg>`;
+      } else if (layout === "week") {
+         // ============ WEEK LAYOUT (52 dots, one per week) ============
+         const totalWeeks = 52;
+         const currentWeek = Math.min(Math.ceil(dayOfYear / 7), 52);
+
+         // Use a grid layout similar to year but with 52 dots
+         const cols = 13;
+         const rows = Math.ceil(totalWeeks / cols);
+
+         const marginX = width * 0.05;
+         const marginTop = height * 0.08;
+         const marginBottom = height * 0.25;
+
+         const availableWidth = width - marginX * 2;
+         const availableHeight = height - marginTop - marginBottom;
+
+         const cellWidth = availableWidth / cols;
+         const cellHeight = availableHeight / rows;
+         const cellSize = Math.min(cellWidth, cellHeight);
+
+         const dotDiameter = cellSize * 0.45;
+         const dotRadius = dotDiameter / 2;
+         const gap = cellSize * 0.3;
+         const cornerRadius = dotDiameter * 0.2;
+
+         const gridWidth = cols * dotDiameter + (cols - 1) * gap;
+         const gridHeight2 = rows * dotDiameter + (rows - 1) * gap;
+
+         const offsetX = (width - gridWidth) / 2;
+         const offsetY = marginTop + (availableHeight - gridHeight2) / 2;
+
+         let shapes = "";
+
+         for (let i = 0; i < totalWeeks; i++) {
+            const weekNum = i + 1;
+            const row = Math.floor(i / cols);
+            const col = i % cols;
+
+            const x = offsetX + col * (dotDiameter + gap);
+            const y = offsetY + row * (dotDiameter + gap);
+            const cx = x + dotRadius;
+            const cy = y + dotRadius;
+
+            let color: string;
+            if (weekNum < currentWeek) {
+               color = colors.passedDot;
+            } else if (weekNum === currentWeek) {
+               color = accentColor;
+            } else {
+               color = colors.futureDot;
+            }
+
+            if (shape === "circle") {
+               shapes += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${color}"/>`;
+            } else if (shape === "square") {
+               shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" fill="${color}"/>`;
+            } else if (shape === "rounded") {
+               shapes += `<rect x="${x}" y="${y}" width="${dotDiameter}" height="${dotDiameter}" rx="${cornerRadius}" ry="${cornerRadius}" fill="${color}"/>`;
+            }
+         }
+
+         const weeksLeft = totalWeeks - currentWeek;
+         const fontSize = Math.max(16, Math.min(32, height * 0.025));
+         const textY = offsetY + gridHeight2 + fontSize * 5.5;
+
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+           <rect width="100%" height="100%" fill="${colors.background}"/>
+           ${shapes}
+           <text
+             x="${width / 2}"
+             y="${textY}"
+             text-anchor="middle"
+             fill="${accentColor}"
+             font-size="${fontSize}"
+             font-weight="500"
+             font-family="Noto Sans"
+             text-rendering="geometricPrecision"
+           >${weeksLeft}w left - ${percentComplete}%</text>
          </svg>`;
       } else {
          // ============ YEAR LAYOUT (continuous dots) ============

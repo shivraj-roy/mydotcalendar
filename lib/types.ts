@@ -36,7 +36,7 @@ export type Theme = "dark" | "light";
 
 export type Shape = "circle" | "square" | "rounded";
 
-export type Layout = "year" | "month";
+export type Layout = "year" | "month" | "weeks" | "week";
 
 export type DeviceName =
    | 'MacBook Air 13" (M2/M3)'
