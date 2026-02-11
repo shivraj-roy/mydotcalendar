@@ -44,8 +44,8 @@ const ACCENT_COLORS = [
 const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: 6 }, (_, i) => CURRENT_YEAR + i);
 const BIRTH_YEARS = Array.from(
-   { length: CURRENT_YEAR - 1930 + 1 },
-   (_, i) => CURRENT_YEAR - i,
+   { length: CURRENT_YEAR - 1930 },
+   (_, i) => CURRENT_YEAR - 1 - i,
 );
 
 const MONTHS = [
