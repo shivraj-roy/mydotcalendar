@@ -10,6 +10,7 @@ export default function Home() {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [goalDialogOpen, setGoalDialogOpen] = useState(false);
    const [journeyDialogOpen, setJourneyDialogOpen] = useState(false);
+   const [lifeDialogOpen, setLifeDialogOpen] = useState(false);
 
    const tooltipMessages = [
       "Like it!",
@@ -100,6 +101,12 @@ export default function Home() {
                      imageSrc="/assets/mockups/Journey Mockup.png"
                      onClick={() => setJourneyDialogOpen(true)}
                   />
+                  <CalendarCard
+                     title="Life"
+                     description="Visualize your entire life in weeks"
+                     imageSrc="/assets/mockups/Year Mockup.png"
+                     onClick={() => setLifeDialogOpen(true)}
+                  />
                </div>
             </section>
          </main>
@@ -150,6 +157,11 @@ export default function Home() {
             type="journey"
             open={journeyDialogOpen}
             onOpenChange={setJourneyDialogOpen}
+         />
+         <WallpaperDialog
+            type="life"
+            open={lifeDialogOpen}
+            onOpenChange={setLifeDialogOpen}
          />
 
          {/* Buy Me a Coffee Button */}
