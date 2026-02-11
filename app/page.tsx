@@ -104,7 +104,7 @@ export default function Home() {
                   <CalendarCard
                      title="Life"
                      description="Visualize your entire life in weeks"
-                     imageSrc="/assets/mockups/Year Mockup.png"
+                     imageSrc="/assets/mockups/Life Mockup.png"
                      onClick={() => setLifeDialogOpen(true)}
                   />
                </div>
