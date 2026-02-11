@@ -539,6 +539,7 @@ export default function WallpaperDialog({
    const [layout, setLayout] = useState<Layout>("year");
 
    // Goal-specific state
+   const [goalLayout, setGoalLayout] = useState<"goal" | "challenge">("goal");
    const [goal, setGoal] = useState("");
    const [startYear, setStartYear] = useState("");
    const [startMonth, setStartMonth] = useState("");
@@ -719,6 +720,9 @@ export default function WallpaperDialog({
    const isStep1Complete = useMemo(() => {
       if (type === "year") return true;
       if (type === "goal") {
+         if (goalLayout === "challenge") {
+            return goal.trim() !== "";
+         }
          return (
             goal.trim() !== "" &&
             startYear !== "" &&
@@ -741,6 +745,7 @@ export default function WallpaperDialog({
       return true;
    }, [
       type,
+      goalLayout,
       goal,
       startYear,
       startMonth,
@@ -797,8 +802,12 @@ export default function WallpaperDialog({
          if (layout !== "year") params.append("layout", layout);
       } else if (type === "goal") {
          params.append("goal", goal);
-         params.append("start_date", startDate);
-         params.append("goal_date", deadlineDate);
+         if (goalLayout === "challenge") {
+            params.append("layout", "challenge");
+         } else {
+            params.append("start_date", startDate);
+            params.append("goal_date", deadlineDate);
+         }
       } else if (type === "journey") {
          params.append("origin", originLocation);
          params.append("destination", destinationLocation);
@@ -820,6 +829,7 @@ export default function WallpaperDialog({
       type,
       device,
       layout,
+      goalLayout,
       accentColor,
       theme,
       shape,
@@ -904,33 +914,66 @@ export default function WallpaperDialog({
                         {type === "goal" && (
                            <>
                               <div className="space-y-2">
-                                 <FieldLabel>Goal</FieldLabel>
+                                 <FieldLabel>Layout</FieldLabel>
+                                 <Select
+                                    value={goalLayout}
+                                    onValueChange={(v: "goal" | "challenge") =>
+                                       setGoalLayout(v)
+                                    }
+                                 >
+                                    <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 rounded-none cursor-pointer">
+                                       <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
+                                       <SelectItem value="goal">
+                                          Goal (custom dates)
+                                       </SelectItem>
+                                       <SelectItem value="challenge">
+                                          21-Day Challenge
+                                       </SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                              </div>
+                              <div className="space-y-2">
+                                 <FieldLabel>
+                                    {goalLayout === "challenge"
+                                       ? "Challenge"
+                                       : "Goal"}
+                                 </FieldLabel>
                                  <input
                                     type="text"
                                     value={goal}
                                     onChange={(e) => setGoal(e.target.value)}
-                                    placeholder="e.g. No Junk Food"
+                                    placeholder={
+                                       goalLayout === "challenge"
+                                          ? "e.g. 21-Day Writing Challenge"
+                                          : "e.g. No Junk Food"
+                                    }
                                     className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
                                  />
                               </div>
-                              <DateSelector
-                                 label="Start Date"
-                                 year={startYear}
-                                 month={startMonth}
-                                 day={startDay}
-                                 onYearChange={setStartYear}
-                                 onMonthChange={setStartMonth}
-                                 onDayChange={setStartDay}
-                              />
-                              <DateSelector
-                                 label="Deadline"
-                                 year={deadlineYear}
-                                 month={deadlineMonth}
-                                 day={deadlineDay}
-                                 onYearChange={setDeadlineYear}
-                                 onMonthChange={setDeadlineMonth}
-                                 onDayChange={setDeadlineDay}
-                              />
+                              {goalLayout !== "challenge" && (
+                                 <>
+                                    <DateSelector
+                                       label="Start Date"
+                                       year={startYear}
+                                       month={startMonth}
+                                       day={startDay}
+                                       onYearChange={setStartYear}
+                                       onMonthChange={setStartMonth}
+                                       onDayChange={setStartDay}
+                                    />
+                                    <DateSelector
+                                       label="Deadline"
+                                       year={deadlineYear}
+                                       month={deadlineMonth}
+                                       day={deadlineDay}
+                                       onYearChange={setDeadlineYear}
+                                       onMonthChange={setDeadlineMonth}
+                                       onDayChange={setDeadlineDay}
+                                    />
+                                 </>
+                              )}
                            </>
                         )}
                         {type === "journey" && (

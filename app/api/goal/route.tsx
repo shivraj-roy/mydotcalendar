@@ -28,6 +28,10 @@ export async function GET(request: NextRequest) {
       const themeParam = searchParams.get("theme");
       const shapeParam = searchParams.get("shape");
       const formatParam = searchParams.get("format");
+      const layoutParam = searchParams.get("layout");
+
+      // Layout: goal (default) or challenge (21-day)
+      const isChallenge = layoutParam === "challenge";
 
       // 2. Validate required parameters
       if (!widthParam || !heightParam) {
@@ -48,7 +52,7 @@ export async function GET(request: NextRequest) {
          );
       }
 
-      if (!goalDateParam) {
+      if (!isChallenge && !goalDateParam) {
          return new Response(
             JSON.stringify({
                error: "Missing required parameter: goal_date (deadline)",
@@ -57,7 +61,7 @@ export async function GET(request: NextRequest) {
          );
       }
 
-      if (!startDateParam) {
+      if (!isChallenge && !startDateParam) {
          return new Response(
             JSON.stringify({
                error: "Missing required parameter: start_date",
@@ -94,23 +98,31 @@ export async function GET(request: NextRequest) {
          );
       }
 
-      // 3. Validate date formats
-      if (!isValidDateFormat(startDateParam)) {
-         return new Response(
-            JSON.stringify({
-               error: "Invalid start_date format. Use YYYY-MM-DD",
-            }),
-            { status: 400, headers: { "Content-Type": "application/json" } },
-         );
-      }
+      // 3. Validate date formats (skip for challenge mode)
+      if (!isChallenge) {
+         if (!isValidDateFormat(startDateParam!)) {
+            return new Response(
+               JSON.stringify({
+                  error: "Invalid start_date format. Use YYYY-MM-DD",
+               }),
+               {
+                  status: 400,
+                  headers: { "Content-Type": "application/json" },
+               },
+            );
+         }
 
-      if (!isValidDateFormat(goalDateParam)) {
-         return new Response(
-            JSON.stringify({
-               error: "Invalid goal_date format. Use YYYY-MM-DD",
-            }),
-            { status: 400, headers: { "Content-Type": "application/json" } },
-         );
+         if (!isValidDateFormat(goalDateParam!)) {
+            return new Response(
+               JSON.stringify({
+                  error: "Invalid goal_date format. Use YYYY-MM-DD",
+               }),
+               {
+                  status: 400,
+                  headers: { "Content-Type": "application/json" },
+               },
+            );
+         }
       }
 
       const accent = accentParam || DEFAULT_ACCENT;
@@ -164,53 +176,75 @@ export async function GET(request: NextRequest) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const startDate = new Date(startDateParam);
-      startDate.setHours(0, 0, 0, 0);
+      let totalDays: number;
+      let currentDayNum: number;
+      let daysLeft: number;
+      let percentComplete: number;
+      let goalNotStarted: boolean;
+      let goalCompleted: boolean;
+      let daysUntilStart: number;
 
-      const goalDate = new Date(goalDateParam);
-      goalDate.setHours(0, 0, 0, 0);
+      if (isChallenge) {
+         // 21-day challenge: starts today, 21 days total
+         totalDays = 21;
+         currentDayNum = 1;
+         daysLeft = 20;
+         percentComplete = Math.round((1 / 21) * 100);
+         goalNotStarted = false;
+         goalCompleted = false;
+         daysUntilStart = 0;
+      } else {
+         const startDate = new Date(startDateParam!);
+         startDate.setHours(0, 0, 0, 0);
 
-      // Total days in the goal period (inclusive)
-      const totalDays =
-         Math.ceil(
-            (goalDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-         ) + 1;
+         const goalDate = new Date(goalDateParam!);
+         goalDate.setHours(0, 0, 0, 0);
 
-      // Days since start (0-indexed, so day 1 = index 0)
-      const daysSinceStart = Math.ceil(
-         (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-      );
+         // Total days in the goal period (inclusive)
+         totalDays =
+            Math.ceil(
+               (goalDate.getTime() - startDate.getTime()) /
+                  (1000 * 60 * 60 * 24),
+            ) + 1;
 
-      // Check if goal hasn't started yet
-      const goalNotStarted = today < startDate;
-      const daysUntilStart = goalNotStarted
-         ? Math.ceil(
-              (startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-           )
-         : 0;
+         // Days since start (0-indexed, so day 1 = index 0)
+         const daysSinceStart = Math.ceil(
+            (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+         );
 
-      // Check if goal is completed
-      const goalCompleted = today > goalDate;
+         // Check if goal hasn't started yet
+         goalNotStarted = today < startDate;
+         daysUntilStart = goalNotStarted
+            ? Math.ceil(
+                 (startDate.getTime() - today.getTime()) /
+                    (1000 * 60 * 60 * 24),
+              )
+            : 0;
 
-      // Days left (from today to goal date)
-      const daysLeft = goalCompleted
-         ? 0
-         : Math.max(
-              0,
-              Math.ceil(
-                 (goalDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-              ),
-           );
+         // Check if goal is completed
+         goalCompleted = today > goalDate;
 
-      // Current day number in the goal (1-indexed for display)
-      const currentDayNum = goalNotStarted
-         ? 0
-         : Math.min(daysSinceStart + 1, totalDays);
+         // Days left (from today to goal date)
+         daysLeft = goalCompleted
+            ? 0
+            : Math.max(
+                 0,
+                 Math.ceil(
+                    (goalDate.getTime() - today.getTime()) /
+                       (1000 * 60 * 60 * 24),
+                 ),
+              );
 
-      // Percentage complete
-      const percentComplete = goalNotStarted
-         ? 0
-         : Math.min(100, Math.round((currentDayNum / totalDays) * 100));
+         // Current day number in the goal (1-indexed for display)
+         currentDayNum = goalNotStarted
+            ? 0
+            : Math.min(daysSinceStart + 1, totalDays);
+
+         // Percentage complete
+         percentComplete = goalNotStarted
+            ? 0
+            : Math.min(100, Math.round((currentDayNum / totalDays) * 100));
+      }
 
       // 5. Get theme colors
       const colors = DEFAULT_COLORS[theme];
