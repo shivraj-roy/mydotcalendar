@@ -211,7 +211,8 @@ export async function GET(request: NextRequest) {
 
       // 8. Status text
       const fontSize = Math.max(16, Math.min(32, height * 0.028));
-      const textY = offsetY + gridHeight + (height - (offsetY + gridHeight)) / 2;
+      const textY =
+         offsetY + gridHeight + (height - (offsetY + gridHeight)) / 2;
 
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
         <rect width="100%" height="100%" fill="${colors.background}"/>

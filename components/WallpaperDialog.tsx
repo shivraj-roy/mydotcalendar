@@ -1226,7 +1226,9 @@ export default function WallpaperDialog({
                                  ? "Accent Color (Today's Dot)"
                                  : type === "journey"
                                    ? "Accent Color (Markers & Status)"
-                                   : "Accent Color (Current Day)"
+                                   : type === "life"
+                                     ? "Accent Color (Current Week)"
+                                     : "Accent Color (Current Day)"
                            }
                         />
                         <Preview
