@@ -453,13 +453,22 @@ function AutomationSetupStep({
                </p>
                <ol className="space-y-2 text-sm text-zinc-400 list-decimal list-inside">
                   <li>Download the shortcut above</li>
-                  <li>Double-click to import into Shortcuts app</li>
+                  <li>
+                     Double-click to import into{" "}
+                     <a
+                        href="shortcuts://"
+                        className="text-white font-medium underline"
+                     >
+                        Shortcuts
+                     </a>{" "}
+                     app
+                  </li>
                   <li>
                      Paste your wallpaper URL into the shortcut&apos;s{" "}
                      <span className="text-white font-medium">
-                        &quot;Text&quot;
+                        &quot;Get content of&quot;
                      </span>{" "}
-                     field
+                     action field
                   </li>
                   <li>
                      In Shortcuts settings, enable{" "}
