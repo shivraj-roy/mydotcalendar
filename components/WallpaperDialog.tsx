@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { DEVICE_RESOLUTIONS } from "@/lib/constants";
 
 // ============ Types ============
-type WallpaperType = "year" | "goal" | "journey";
+type WallpaperType = "year" | "goal" | "journey" | "life";
 type Theme = "dark" | "light";
 type Shape = "circle" | "square" | "rounded";
 type Layout = "year" | "month";
@@ -43,6 +43,10 @@ const ACCENT_COLORS = [
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: 6 }, (_, i) => CURRENT_YEAR + i);
+const BIRTH_YEARS = Array.from(
+   { length: CURRENT_YEAR - 1930 },
+   (_, i) => CURRENT_YEAR - 1 - i,
+);
 
 const MONTHS = [
    { value: "01", label: "January" },
@@ -79,6 +83,11 @@ const DIALOG_CONFIG = {
       title: "Journey Calendar Setup",
       description:
          "Track your progress from origin to destination. Set up daily automation to update your wallpaper as you approach your target date.",
+   },
+   life: {
+      title: "Life Calendar Setup",
+      description:
+         "Visualize your entire life in weeks. Each dot is one week — 90 years, 4,680 dots.",
    },
 };
 
@@ -309,6 +318,7 @@ function DateSelector({
    onYearChange,
    onMonthChange,
    onDayChange,
+   years = YEARS,
 }: {
    label: string;
    year: string;
@@ -317,6 +327,7 @@ function DateSelector({
    onYearChange: (value: string) => void;
    onMonthChange: (value: string) => void;
    onDayChange: (value: string) => void;
+   years?: number[];
 }) {
    return (
       <div className="space-y-2">
@@ -327,7 +338,7 @@ function DateSelector({
                   <SelectValue placeholder="Year" />
                </SelectTrigger>
                <SelectContent className="bg-zinc-800 border-zinc-700 rounded-none">
-                  {YEARS.map((y) => (
+                  {years.map((y) => (
                      <SelectItem key={y} value={y.toString()}>
                         {y}
                      </SelectItem>
@@ -548,6 +559,11 @@ export default function WallpaperDialog({
    const [deadlineMonth, setDeadlineMonth] = useState("");
    const [deadlineDay, setDeadlineDay] = useState("");
 
+   // Life-specific state
+   const [birthdayYear, setBirthdayYear] = useState("");
+   const [birthdayMonth, setBirthdayMonth] = useState("");
+   const [birthdayDay, setBirthdayDay] = useState("");
+
    // Journey-specific state
    const [originLocation, setOriginLocation] = useState("");
    const [originLocationInput, setOriginLocationInput] = useState("");
@@ -733,6 +749,11 @@ export default function WallpaperDialog({
             deadlineDay !== ""
          );
       }
+      if (type === "life") {
+         return (
+            birthdayYear !== "" && birthdayMonth !== "" && birthdayDay !== ""
+         );
+      }
       if (type === "journey") {
          return (
             originLocation.trim() !== "" &&
@@ -747,6 +768,9 @@ export default function WallpaperDialog({
       type,
       goalLayout,
       goal,
+      birthdayYear,
+      birthdayMonth,
+      birthdayDay,
       startYear,
       startMonth,
       startDay,
@@ -774,6 +798,14 @@ export default function WallpaperDialog({
       }
       return "";
    }, [deadlineYear, deadlineMonth, deadlineDay]);
+
+   // Format birthday for life calendar
+   const birthdayDate = useMemo(() => {
+      if (birthdayYear && birthdayMonth && birthdayDay) {
+         return `${birthdayYear}-${birthdayMonth}-${birthdayDay}`;
+      }
+      return "";
+   }, [birthdayYear, birthdayMonth, birthdayDay]);
 
    // Format target date for journey
    const targetDate = useMemo(() => {
@@ -808,6 +840,8 @@ export default function WallpaperDialog({
             params.append("start_date", startDate);
             params.append("goal_date", deadlineDate);
          }
+      } else if (type === "life") {
+         params.append("birthday", birthdayDate);
       } else if (type === "journey") {
          params.append("origin", originLocation);
          params.append("destination", destinationLocation);
@@ -822,6 +856,7 @@ export default function WallpaperDialog({
       const endpoints = {
          year: "/api/year",
          goal: "/api/goal",
+         life: "/api/life",
          journey: "/api/journey",
       };
       return `${baseUrl}${endpoints[type]}?${params.toString()}`;
@@ -836,6 +871,7 @@ export default function WallpaperDialog({
       goal,
       startDate,
       deadlineDate,
+      birthdayDate,
       originLocation,
       destinationLocation,
       targetDate,
@@ -975,6 +1011,18 @@ export default function WallpaperDialog({
                                  </>
                               )}
                            </>
+                        )}
+                        {type === "life" && (
+                           <DateSelector
+                              label="Birthday"
+                              year={birthdayYear}
+                              month={birthdayMonth}
+                              day={birthdayDay}
+                              years={BIRTH_YEARS}
+                              onYearChange={setBirthdayYear}
+                              onMonthChange={setBirthdayMonth}
+                              onDayChange={setBirthdayDay}
+                           />
                         )}
                         {type === "journey" && (
                            <>
@@ -1178,12 +1226,14 @@ export default function WallpaperDialog({
                                  ? "Accent Color (Today's Dot)"
                                  : type === "journey"
                                    ? "Accent Color (Markers & Status)"
-                                   : "Accent Color (Current Day)"
+                                   : type === "life"
+                                     ? "Accent Color (Current Week)"
+                                     : "Accent Color (Current Day)"
                            }
                         />
                         <Preview
                            url={computedUrl}
-                           alt={`${type === "year" ? "Year" : type === "goal" ? "Goal" : "Journey"} Wallpaper Preview`}
+                           alt={`${type === "year" ? "Year" : type === "goal" ? "Goal" : type === "life" ? "Life" : "Journey"} Wallpaper Preview`}
                         />
                      </div>
                   </div>
