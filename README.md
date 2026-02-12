@@ -3,7 +3,7 @@
 
 # Dot Cal
 
-**Track your year, goals, and journeys with beautiful minimal calendars**
+**Track your year, goals, journeys, and life with beautiful minimal calendars**
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -14,45 +14,48 @@
 
 [![CI](https://github.com/shivraj-roy/mydotcalendar/actions/workflows/ci.yml/badge.svg)](https://github.com/shivraj-roy/mydotcalendar/actions/workflows/ci.yml)
 
+<a href="https://buymeacoffee.com/shivraj.roy" target="_blank"><img src="./public/bmc-button.svg" alt="Buy Me a Coffee" height="40"></a>
+
 </div>
 
 ---
 
 ## ✨ What is Dot Cal?
 
-Dot Cal generates dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Each day updates automatically with a new wallpaper showing your progress.
+Dot Cal generates dynamic wallpapers that visualize your year, goals, journeys, and life as a grid of dots. Each day updates automatically with a new wallpaper showing your progress.
 
-<div align="center">
-
-### Year Calendar
-
-  <img src="./public/assets/mockups/Year Mockup.png" alt="Year Calendar" width="700">
-
-_365 dots representing every day of the year. Watch your year unfold dot by dot._
-
----
-
-### Goal Tracker
-
-  <img src="./public/assets/mockups/Goal Mockup.png" alt="Goal Calendar" width="700">
-
-_Countdown to your important goals. Each dot marks a day toward achievement._
-
----
-
-### Journey Calendar
-
-  <img src="./public/assets/mockups/Journey Mockup.png" alt="Journey Calendar" width="700">
-
-_Track trips with satellite map views. Visualize your journey from start to destination._
-
-</div>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Year Calendar</strong><br/>
+      <img src="./public/assets/mockups/Year Mockup.png" alt="Year Calendar" width="100%"><br/>
+      <em>365 dots. Watch your year unfold dot by dot.</em>
+    </td>
+    <td align="center" width="50%">
+      <strong>Goal Tracker</strong><br/>
+      <img src="./public/assets/mockups/Goal Mockup.png" alt="Goal Calendar" width="100%"><br/>
+      <em>Countdown to your goals. Each dot marks a day.</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Journey Calendar</strong><br/>
+      <img src="./public/assets/mockups/Journey Mockup.png" alt="Journey Calendar" width="100%"><br/>
+      <em>Satellite map views from start to destination.</em>
+    </td>
+    <td align="center" width="50%">
+      <strong>Life Calendar</strong><br/>
+      <img src="./public/assets/mockups/Life Mockup.png" alt="Life Calendar" width="100%"><br/>
+      <em>4,680 dots. Visualize your life, week by week.</em>
+    </td>
+  </tr>
+</table>
 
 ---
 
 ## 🚀 Features
 
-- **🎨 Three Calendar Types** - Year tracker, goal countdown, and journey maps
+- **🎨 Four Calendar Types** - Year tracker, goal countdown, journey maps, and life calendar
 - **🌍 Live Satellite Imagery** - Powered by Mapbox for journey calendars
 - **⚡ Auto-Updates** - Wallpapers refresh daily via macOS Shortcuts automation
 - **🎯 Customizable** - Pick colors, set goals, choose dates
@@ -145,7 +148,8 @@ mydotcalendar/
 │   ├── api/
 │   │   ├── year/          # Year calendar API endpoint
 │   │   ├── goal/          # Goal calendar API endpoint
-│   │   └── journey/       # Journey calendar API endpoint
+│   │   ├── journey/       # Journey calendar API endpoint
+│   │   └── life/          # Life calendar API endpoint
 │   ├── layout.tsx         # Root layout with metadata
 │   ├── page.tsx           # Home page
 │   ├── robots.ts          # SEO robots configuration
