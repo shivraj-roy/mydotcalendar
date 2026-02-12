@@ -13,7 +13,7 @@ const instrumentSans = Instrument_Sans({
 export const metadata: Metadata = {
    title: "Dot Cal",
    description:
-      "Track your year, goals, and journeys with beautiful minimal calendars. Generate dynamic wallpapers that visualize your year, goals, and journeys as a grid of dots. Updates automatically daily.",
+      "Track your year, goals, journeys, and life with beautiful minimal calendars. Generate dynamic wallpapers that visualize your progress as a grid of dots. Updates automatically daily.",
    keywords: [
       "wallpaper",
       "calendar",
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
       canonical: "/",
    },
    openGraph: {
-      title: "Dot Cal | Track your year, goals, and journeys.",
+      title: "Dot Cal | Track your year, goals, journeys, and life.",
       description:
-         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot‑grid wallpapers that auto-update daily to visualize your progress.",
+         "Minimal wallpaper to track your year, goals, journeys, and life. Create dynamic dot‑grid wallpapers that auto-update daily to visualize your progress.",
       type: "website",
       url: "https://www.dotcal.in",
       siteName: "Dot Cal",
@@ -47,16 +47,16 @@ export const metadata: Metadata = {
             url: "/assets/images/og-banner.png",
             width: 1200,
             height: 630,
-            alt: "My Dot Calendar • Minimal wallpaper to track your year, goals, and journeys.",
+            alt: "My Dot Calendar • Minimal wallpaper to track your year, goals, journeys, and life.",
          },
       ],
       locale: "en_US",
    },
    twitter: {
       card: "summary_large_image",
-      title: "Dot Cal | Track your year, goals, and journeys.",
+      title: "Dot Cal | Track your year, goals, journeys, and life.",
       description:
-         "Minimal wallpaper to track your year, goals, and journeys. Create dynamic dot-grid wallpapers that auto-update daily to visualize your progress.",
+         "Minimal wallpaper to track your year, goals, journeys, and life. Create dynamic dot-grid wallpapers that auto-update daily to visualize your progress.",
       images: ["/assets/images/og-banner.png"],
    },
    icons: {
